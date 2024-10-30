@@ -9,6 +9,7 @@ import io.kestra.core.models.executions.ExecutionKilledExecution;
 import io.kestra.core.models.executions.TaskRun;
 import io.kestra.core.models.executions.TaskRunAttempt;
 import io.kestra.core.models.flows.Flow;
+import io.kestra.core.models.flows.FlowScope;
 import io.kestra.core.models.flows.State;
 import io.kestra.core.models.flows.input.InputAndValue;
 import io.kestra.core.models.hierarchies.AbstractGraphTask;
@@ -17,6 +18,7 @@ import io.kestra.core.models.tasks.Task;
 import io.kestra.core.models.tasks.retrys.AbstractRetry;
 import io.kestra.core.queues.QueueFactoryInterface;
 import io.kestra.core.queues.QueueInterface;
+import io.kestra.core.repositories.ArrayListTotal;
 import io.kestra.core.repositories.ExecutionRepositoryInterface;
 import io.kestra.core.repositories.FlowRepositoryInterface;
 import io.kestra.core.repositories.LogRepositoryInterface;
@@ -30,6 +32,7 @@ import io.kestra.plugin.core.flow.Pause;
 import io.kestra.plugin.core.flow.WorkingDirectory;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.http.multipart.CompletedPart;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -114,6 +117,26 @@ public class ExecutionService {
         }
 
         return execution;
+    }
+
+    public Optional<Execution> findFirstPauseExecutionForFlow(final String tenant,
+                                                              final String namespace,
+                                                              final String flowId) {
+        ArrayListTotal<Execution> executions = executionRepository.find(
+            Pageable.from(1, 1),
+            null,
+            tenant,
+            null,
+            namespace,
+            flowId,
+            null,
+            null,
+            List.of(State.Type.PAUSED),
+            null,
+            null,
+            null
+        );
+        return executions.stream().findFirst();
     }
 
     /**
@@ -461,7 +484,28 @@ public class ExecutionService {
     }
 
     /**
+     * Validates the inputs for an execution to be resumed.
+     * <p>
+     * The execution must be paused or this call will be a no-op.
+     *
+     * @param execution the execution to resume
+     * @param flow      the flow of the execution
+     * @return the execution in the new state.
+     */
+    public Mono<List<InputAndValue>> validateForResume(final Execution execution, Flow flow) {
+        return getFirstPausedTaskOr(execution, flow)
+            .flatMap(task -> {
+                if (task.isPresent() && task.get() instanceof Pause pauseTask) {
+                    return Mono.just(flowInputOutput.resolveInputs(pauseTask.getOnResume(), execution, Map.of()));
+                } else {
+                    return Mono.just(Collections.emptyList());
+                }
+            });
+    }
+
+    /**
      * Resume a paused execution to a new state.
+     * <p>
      * The execution must be paused or this call will be a no-op.
      *
      * @param execution the execution to resume
