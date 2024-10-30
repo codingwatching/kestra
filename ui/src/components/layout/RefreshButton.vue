@@ -1,11 +1,11 @@
 <template>
     <el-button-group class="min-w-auto" data-component="FILENAME_PLACEHOLDER" :size="size" :class="customClass">
-        <el-button :disabled="!canAutoRefresh" :active="autoRefresh" @click="toggleAutoRefresh" data-test-id="toggle-aut-refresh-button">
+        <el-button :class="{'border-start-0 rounded-0': filters}" :disabled="!canAutoRefresh" :active="autoRefresh" @click="toggleAutoRefresh" data-test-id="toggle-aut-refresh-button">
             <kicon :tooltip="$t('toggle periodic refresh each 10 seconds')" placement="bottom">
                 <component :is="autoRefresh ? 'auto-renew' : 'auto-renew-off'" class="auto-refresh-icon" />
             </kicon>
         </el-button>
-        <el-button @click="triggerRefresh" data-test-id="trigger-refresh-button">
+        <el-button :class="{'rounded-0 rounded-end': filters}" @click="triggerRefresh" data-test-id="trigger-refresh-button">
             <kicon :tooltip="$t('trigger refresh')" placement="bottom">
                 <refresh />
             </kicon>
@@ -33,7 +33,11 @@
             customClass: {
                 type: String,
                 default: ""
-            }
+            },
+            filters: {
+                type: Boolean,
+                default: false
+            },
         },
         data() {
             return {
