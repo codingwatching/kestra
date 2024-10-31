@@ -922,7 +922,8 @@
         "date": "Date"
       },
       "recent": {
-        "label": "Recent searches"
+        "label": "Recent searches",
+        "empty": "You still haven't searched for anything."
       },
       "save": {
         "label": "Saved searches",

@@ -1,8 +1,9 @@
 <template>
     <section class="d-inline-flex w-100 filters">
-        <Recents :prefix />
+        <Recents :prefix @search="handleRecents" />
 
         <el-select
+            ref="field"
             v-model="current"
             :placeholder="t('filters.label')"
             allow-create
@@ -24,6 +25,7 @@
 
 <script setup lang="ts">
     import {ref, computed} from "vue";
+    import {ElSelect} from "element-plus";
 
     import {useI18n} from "vue-i18n";
     const {t} = useI18n({useScope: "global"});
@@ -55,10 +57,17 @@
         },
     ];
 
+    const field = ref<InstanceType<typeof ElSelect> | null>(null);
+
     const current = ref({});
     const available = computed(() =>
         OPTIONS.filter((o) => props.include.includes(o.value)),
     );
+
+    const handleRecents = (value) => {
+        if (value) current.value = value;
+        field.value?.focus();
+    };
 </script>
 
 <style lang="scss">
