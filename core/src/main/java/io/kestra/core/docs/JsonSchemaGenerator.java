@@ -16,6 +16,8 @@ import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidatio
 import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationOption;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
 import com.google.common.collect.ImmutableMap;
+import io.kestra.core.models.dashboards.Chart;
+import io.kestra.core.models.dashboards.DataFilter;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
@@ -368,6 +370,20 @@ public class JsonSchemaGenerator {
                         return getRegisteredPlugins()
                             .stream()
                             .flatMap(registeredPlugin -> registeredPlugin.getTaskRunners().stream())
+                            .filter(Predicate.not(io.kestra.core.models.Plugin::isInternal))
+                            .flatMap(clz -> safelyResolveSubtype(declaredType, clz, typeContext).stream())
+                            .toList();
+                    } else if (declaredType.getErasedType() == Chart.class) {
+                        return getRegisteredPlugins()
+                            .stream()
+                            .flatMap(registeredPlugin -> registeredPlugin.getCharts().stream())
+                            .filter(Predicate.not(io.kestra.core.models.Plugin::isInternal))
+                            .flatMap(clz -> safelyResolveSubtype(declaredType, clz, typeContext).stream())
+                            .toList();
+                    } else if (declaredType.getErasedType() == DataFilter.class) {
+                        return getRegisteredPlugins()
+                            .stream()
+                            .flatMap(registeredPlugin -> registeredPlugin.getDataFilters().stream())
                             .filter(Predicate.not(io.kestra.core.models.Plugin::isInternal))
                             .flatMap(clz -> safelyResolveSubtype(declaredType, clz, typeContext).stream())
                             .toList();

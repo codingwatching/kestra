@@ -1207,29 +1207,6 @@
     @use "element-plus/theme-chalk/src/mixins/mixins" as *;
     @import "@kestra-io/ui-libs/src/scss/variables.scss";
 
-    .button-top {
-        background: var(--card-bg);
-        border-bottom: 1px solid var(--bs-border-color);
-        padding: calc(var(--spacer) / 2) calc(var(--spacer) * 2);
-        padding-left: calc(var(--spacer) / 2);
-        display: flex;
-        align-items: center;
-        justify-content: end;
-        max-height: 49.5px;
-
-        :deep(.validation) {
-            border: 0;
-            padding-left: calc(var(--spacer) / 2);
-            padding-right: calc(var(--spacer) / 2);
-        }
-
-        :deep(.el-button) {
-            border: 0;
-            padding-left: calc(var(--spacer) / 2);
-            padding-right: calc(var(--spacer) / 2);
-        }
-    }
-
     .main-editor {
         padding: calc(var(--spacer) / 2) 0px;
         background: var(--bs-body-bg);
