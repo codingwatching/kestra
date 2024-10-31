@@ -9,7 +9,6 @@ import io.kestra.core.models.executions.ExecutionKilledExecution;
 import io.kestra.core.models.executions.TaskRun;
 import io.kestra.core.models.executions.TaskRunAttempt;
 import io.kestra.core.models.flows.Flow;
-import io.kestra.core.models.flows.FlowScope;
 import io.kestra.core.models.flows.State;
 import io.kestra.core.models.flows.input.InputAndValue;
 import io.kestra.core.models.hierarchies.AbstractGraphTask;
@@ -119,9 +118,10 @@ public class ExecutionService {
         return execution;
     }
 
-    public Optional<Execution> findFirstPauseExecutionForFlow(final String tenant,
-                                                              final String namespace,
-                                                              final String flowId) {
+    public Optional<Execution> findFirstExecutionFor(final String tenant,
+                                                     final String namespace,
+                                                     final String flowId,
+                                                     final List<State.Type> states) {
         ArrayListTotal<Execution> executions = executionRepository.find(
             Pageable.from(1, 1),
             null,
@@ -131,7 +131,7 @@ public class ExecutionService {
             flowId,
             null,
             null,
-            List.of(State.Type.PAUSED),
+            states,
             null,
             null,
             null
