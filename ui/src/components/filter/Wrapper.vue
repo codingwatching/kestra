@@ -1,6 +1,6 @@
 <template>
-    <section class="d-inline-flex filters">
-        <Recents />
+    <section class="d-inline-flex w-100 filters">
+        <Recents :prefix />
 
         <el-select
             v-model="current"
@@ -17,7 +17,7 @@
             />
         </el-select>
 
-        <Save :disabled="!Object.keys(current).length" :current="current" />
+        <Save :disabled="!Object.keys(current).length" :prefix :current />
         <slot name="refresh" />
     </section>
 </template>
@@ -31,7 +31,10 @@
     import Recents from "./components/Recents.vue";
     import Save from "./components/Save.vue";
 
-    const props = defineProps({include: {type: Array, required: true}});
+    const props = defineProps({
+        include: {type: Array, required: true},
+        prefix: {type: String, required: true},
+    });
 
     const OPTIONS = [
         {

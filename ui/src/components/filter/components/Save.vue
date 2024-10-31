@@ -1,10 +1,5 @@
 <template>
-    <el-button
-        :disabled="disabled"
-        @click="toggle(true)"
-        :icon="Save"
-        class="rounded-0"
-    />
+    <el-button :disabled @click="toggle(true)" :icon="Save" class="rounded-0" />
 
     <el-dialog
         @opened="input?.focus"
@@ -46,12 +41,13 @@
     import {useI18n} from "vue-i18n";
     const {t} = useI18n({useScope: "global"});
 
-    import {getRecents, setRecents} from "../filters";
+    import {getSaved, setSaved} from "../filters";
 
     import Save from "vue-material-design-icons/ContentSaveOutline.vue";
 
     const props = defineProps({
         disabled: {type: Boolean, default: true},
+        prefix: {type: String, required: true},
         current: {type: Object, required: true},
     });
 
@@ -63,8 +59,12 @@
     const input = ref<InstanceType<typeof ElInput> | null>(null);
     const label = ref("");
     const save = () => {
-        const recents = getRecents();
-        setRecents([...recents, props.current]);
+        const recents = getSaved(props.prefix);
+
+        setSaved(props.prefix, [
+            ...recents,
+            {name: label.value, value: props.current},
+        ]);
 
         toast.saved(t("filters.save.dialog.confirmation"));
 
