@@ -15,6 +15,7 @@
             <el-input
                 ref="input"
                 v-model="label"
+                @keydown.enter.prevent="save()"
                 :placeholder="t('filters.save.dialog.placeholder')"
                 class="pt-1"
             />
@@ -54,6 +55,9 @@
     const visible = ref(false);
     const toggle = (isVisible = false) => {
         visible.value = isVisible;
+
+        // Clearing input each time dialog closes
+        if (!isVisible) label.value = "";
     };
 
     const input = ref<InstanceType<typeof ElInput> | null>(null);
@@ -66,7 +70,7 @@
             {name: label.value, value: props.current},
         ]);
 
-        toast.saved(t("filters.save.dialog.confirmation"));
+        toast.saved(t("filters.save.dialog.confirmation", {name: label.value}));
 
         toggle();
     };

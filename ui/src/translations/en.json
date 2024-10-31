@@ -931,7 +931,7 @@
           "heading": "Save current search",
           "placeholder": "Label",
           "hint": "How do you want to label this search criteria?",
-          "confirmation": "Search criteria saved!"
+          "confirmation": "Search criteria <code>{name}</code>"
         }
       }
     }
