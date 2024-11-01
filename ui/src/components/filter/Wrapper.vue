@@ -30,7 +30,7 @@
     import {useI18n} from "vue-i18n";
     const {t} = useI18n({useScope: "global"});
 
-    import Recents from "./components/Recents.vue";
+    import Recents from "./components/recents/Wrapper.vue";
     import Save from "./components/Save.vue";
 
     const props = defineProps({
