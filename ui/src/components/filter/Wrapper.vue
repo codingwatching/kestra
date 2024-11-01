@@ -18,8 +18,14 @@
             />
         </el-select>
 
-        <Save :disabled="!Object.keys(current).length" :prefix :current />
-        <slot name="refresh" />
+        <el-button-group class="d-inline-flex">
+            <Save :disabled="!Object.keys(current).length" :prefix :current />
+            <Refresh
+                v-if="refresh.show"
+                :can-auto-refresh="refresh.canAutoRefresh"
+                @refresh="refresh.callback"
+            />
+        </el-button-group>
     </section>
 </template>
 
@@ -30,12 +36,22 @@
     import {useI18n} from "vue-i18n";
     const {t} = useI18n({useScope: "global"});
 
+    import Refresh from "../layout/RefreshButton.vue";
+
     import Recents from "./components/recents/Recents.vue";
     import Save from "./components/Save.vue";
 
     const props = defineProps({
-        include: {type: Array, required: true},
         prefix: {type: String, required: true},
+        include: {type: Array, required: true},
+        refresh: {
+            type: Object,
+            default: () => ({
+                show: false,
+                canAutoRefresh: true,
+                callback: () => {},
+            }),
+        },
     });
 
     const OPTIONS = [
@@ -77,6 +93,17 @@
         box-shadow:
             0 -1px 0 0 var(--el-border-color) inset,
             0 1px 0 0 var(--el-border-color) inset;
+    }
+
+    & .el-button-group {
+        .el-button {
+            border-radius: 0;
+        }
+
+        .el-button:last-child {
+            border-top-right-radius: var(--bs-border-radius);
+            border-bottom-right-radius: var(--bs-border-radius);
+        }
     }
 }
 </style>
