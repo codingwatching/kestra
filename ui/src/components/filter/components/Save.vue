@@ -1,5 +1,5 @@
 <template>
-    <el-button :disabled @click="toggle(true)" :icon="Save" class="rounded-0" />
+    <el-button :disabled @click="toggle(true)" :icon="Save" />
 
     <el-dialog
         @opened="input?.focus"
