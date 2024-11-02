@@ -12,9 +12,9 @@ import jakarta.validation.constraints.Pattern;
  */
 @Plugin
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type", visible = true, include = JsonTypeInfo.As.PROPERTY)
-public interface AppPluginInterface extends io.kestra.core.models.Plugin {
+public interface AppBlockInterface extends io.kestra.core.models.Plugin {
     @Schema(
-        title = "The type of the app."
+        title = "The type of the block."
     )
     @NotNull
     @NotBlank
