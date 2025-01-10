@@ -218,8 +218,8 @@ public class TriggerController {
         @Parameter(description = "The current page size") @QueryValue(defaultValue = "10") @Min(1) int size,
         @Parameter(description = "The sort of current page") @Nullable @QueryValue List<String> sort,
         @Parameter(description = "A string filter") @Nullable @QueryValue(value = "q") String query,
-        @Parameter(description = "A namespace filter prefix") @Nullable @QueryValue String namespace,
-        @Parameter(description = "A flow id") @Nullable @QueryValue String flowId
+        @Parameter(description = "The namespace") @PathVariable String namespace,
+        @Parameter(description = "The flow id") @PathVariable String flowId
     ) throws HttpStatusException {
         return PagedResults.of(triggerRepository.find(
             PageableUtils.from(page, size, sort, triggerRepository.sortMapping()),
@@ -261,6 +261,7 @@ public class TriggerController {
                 // If we are enabling back a schedule trigger,
                 // then we need to handle its recoverMissedSchedules
                 if (current.getDisabled() && !newTrigger.getDisabled() && abstractTrigger instanceof Schedule schedule) {
+                    nextExecutionDate = schedule.nextEvaluationDate();
                     RecoverMissedSchedules recoverMissedSchedules = schedule.getRecoverMissedSchedules();
                     if (recoverMissedSchedules == RecoverMissedSchedules.LAST) {
                         nextExecutionDate = schedule.previousEvaluationDate(conditionContext);
@@ -330,15 +331,6 @@ public class TriggerController {
         this.triggerQueue.emit(trigger);
 
         return HttpResponse.ok(trigger);
-    }
-
-    @ExecuteOn(TaskExecutors.IO)
-    @Post(uri = "/restart")
-    @Operation(tags = {"Triggers"}, summary = "Restart a trigger")
-    public void restart(
-        @Parameter(description = "The trigger") @Body final Trigger trigger
-    ) throws HttpStatusException {
-
     }
 
     @ExecuteOn(TaskExecutors.IO)

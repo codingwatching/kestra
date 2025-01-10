@@ -1,14 +1,5 @@
 <template>
-    <div class="row mb-3">
-        <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-            <el-input
-                v-model="search"
-                :placeholder="$t('search')"
-                :prefix-icon="Magnify"
-                clearable
-            /> 
-        </div>
-    </div>
+    <KestraFilter :placeholder="$t('search')" :search-callback="(input)=> search = input" :decode="false" />
 
     <select-table
         :data="filteredKeywords"
@@ -30,9 +21,9 @@
                     {{ $t("delete") }}
                 </el-button>
             </bulk-select>
-        </template>    
+        </template>
         <el-table-column prop="key" sortable="custom" :sort-orders="['ascending', 'descending']" :label="$t('key')">
-            <template #default="scope"> 
+            <template #default="scope">
                 <id :value="scope.row.key" :shrink="false" />
             </template>
         </el-table-column>
@@ -147,7 +138,7 @@
     import ContentSave from "vue-material-design-icons/ContentSave.vue";
     import TimeSelect from "../executions/date-select/TimeSelect.vue";
     import Check from "vue-material-design-icons/Check.vue";
-    import Magnify from "vue-material-design-icons/Magnify.vue";
+    import KestraFilter from "../filter/KestraFilter.vue";
 </script>
 
 <script>
@@ -258,7 +249,7 @@
                     } else {
                         callback();
                     }
-                } catch (error) {
+                } catch {
                     callback(new Error(this.$t("Invalid input: Expected a JSON formatted string")));
                 }
             },

@@ -87,6 +87,7 @@ public class Extension extends AbstractExtension {
         filters.put("escapeChar", new EscapeCharFilter());
         filters.put("json", new JsonFilter());
         filters.put("toJson", new ToJsonFilter());
+        filters.put("distinct", new DistinctFilter());
         filters.put("keys", new KeysFilter());
         filters.put("number", new NumberFilter());
         filters.put("urldecode", new UrlDecoderFilter());
@@ -142,11 +143,14 @@ public class Extension extends AbstractExtension {
         functions.put("yaml", new YamlFunction());
         functions.put("printContext", new FetchContextFunction());
         functions.put("fetchContext", new FetchContextFunction());
+        functions.put("uuid", new UUIDFunction());
+        functions.put("id", new IDFunction());
         functions.put("fromIon", new FromIonFunction());
         functions.put("fileSize", fileSizeFunction);
         if (this.errorLogsFunction != null) {
             functions.put("errorLogs", errorLogsFunction);
         }
+        functions.put("randomInt", new RandomIntFunction());
         return functions;
     }
 

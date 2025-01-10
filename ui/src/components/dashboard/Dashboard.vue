@@ -5,8 +5,8 @@
         :breadcrumb="[
             {
                 label: t(custom.shown ? 'custom_dashboard' : 'dashboard_label'),
-                link: {}
-            }
+                link: {},
+            },
         ]"
         :id="custom.dashboard.id ?? undefined"
     />
@@ -16,7 +16,7 @@
             :prefix="custom.shown ? 'custom_dashboard' : 'dashboard'"
             :include="
                 custom.shown
-                    ? ['relative_date', 'absolute_date']
+                    ? ['relative_date', 'absolute_date', 'namespace', 'labels']
                     : [
                         'namespace',
                         'state',
@@ -25,9 +25,12 @@
                         'absolute_date',
                     ]
             "
-            :refresh="{
-                shown: true,
-                callback: custom.shown ? refreshCustom : fetchAll,
+            :buttons="{
+                refresh: {
+                    shown: true,
+                    callback: custom.shown ? refreshCustom : fetchAll,
+                },
+                settings: {shown: false},
             }"
             :dashboards="{shown: customDashboardsEnabled}"
             @dashboard="(v) => handleCustomUpdate(v)"
@@ -41,7 +44,7 @@
         <el-row class="custom">
             <el-col
                 v-for="(chart, index) in custom.dashboard.charts"
-                :key="index"
+                :key="index + JSON.stringify(route.query)"
                 :xs="24"
                 :sm="12"
             >
@@ -233,7 +236,7 @@
     import moment from "moment";
 
     import {apiUrl} from "override/utils/route";
-    import State from "../../utils/state";
+    import {State} from "@kestra-io/ui-libs"
 
     import Header from "./components/Header.vue";
     import Card from "./components/Card.vue";
@@ -297,7 +300,7 @@
     });
 
     const customDashboardsEnabled = computed(
-        () => store.state.misc.configs.isCustomDashboardsEnabled,
+        () => store.state.misc?.configs?.isCustomDashboardsEnabled,
     );
 
     // Custom Dashboards
@@ -538,9 +541,9 @@
     onBeforeMount(() => {
         handleCustomUpdate(route.params?.id ? {id: route.params?.id} : undefined);
 
-        if (props.flowID) {
-            router.replace({query: {...route.query, flowId: props.flowID}});
-        }
+        // if (props.flowID) {
+        //     router.replace({query: {...route.query, flowId: props.flowID}});
+        // }
 
     // if (!route.query.namespace && props.restoreURL) {
     //     router.replace({query: {...route.query, namespace: defaultNamespace}});
@@ -578,13 +581,9 @@ $spacing: 20px;
             padding-bottom: $spacing;
 
             & div {
-                background: var(--card-bg);
-                border: 1px solid var(--bs-gray-300);
+                background: var(--ks-background-card);
+                border: 1px solid var(--ks-border-primary);
                 border-radius: $border-radius;
-
-                html.dark & {
-                    border-color: var(--bs-gray-600);
-                }
             }
         }
     }
@@ -619,7 +618,7 @@ $spacing: 20px;
 .description {
     padding: 0px 32px;
     margin: 0;
-    color: var(--bs-gray-700);
+    color: var(--ks-content-secondary);
 }
 
 .custom {
@@ -637,15 +636,27 @@ $spacing: 20px;
 
             & > div {
                 height: 100%;
-                background: var(--card-bg);
-                border: 1px solid var(--bs-gray-300);
+                background: var(--ks-background-card);
+                border: 1px solid var(--ks-border-primary);
                 border-radius: $border-radius;
-
-                html.dark & {
-                    border-color: var(--bs-gray-600);
-                }
             }
         }
+    }
+}
+
+:deep(.legend) {
+    &::-webkit-scrollbar {
+        height: 5px;
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--ks-background-card);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--ks-button-background-primary);
+        border-radius: 0px;
     }
 }
 </style>

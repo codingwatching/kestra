@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4">
+    <div class="p-4 h-100">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-6 fw-bold">
                 {{ t("dashboard.next_scheduled_executions") }}
@@ -143,7 +143,7 @@
 </template>
 
 <script setup>
-    import {onBeforeMount, watch, ref} from "vue";
+    import {onBeforeMount, ref, watch} from "vue";
     import {useStore} from "vuex";
     import {useI18n} from "vue-i18n";
 
@@ -188,7 +188,7 @@
                     results: response.results?.map(
                         ({abstractTrigger, triggerContext, ...rest}) => {
                             const disabled =
-                                abstractTrigger.disabled || triggerContext.disabled;
+                                abstractTrigger?.disabled ?? triggerContext.disabled;
                             const tooltip = !!abstractTrigger.disabled;
 
                             return {
@@ -219,12 +219,13 @@
 
 <style lang="scss">
 code {
-    color: var(--bs-code-color);
+    color: var(--ks-content-id);
 }
 
 .nextscheduled {
-    --el-table-tr-bg-color: var(--bs-body-bg) !important;
-    background: var(--bs-body-bg);
+    --el-table-tr-bg-color: var(--ks-background-body) !important;
+    background: var(--ks-background-body);
+    // FIXME: choose variables
     & a {
         color: #8e71f7;
 
