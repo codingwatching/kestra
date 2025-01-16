@@ -6,6 +6,7 @@
             :flow-id="flowParsed?.id"
             :namespace="flowParsed?.namespace"
             :is-creating="true"
+            :flow-validation="flowValidation"
             :flow-graph="flowGraph"
             :is-read-only="false"
             :is-dirty="true"
@@ -16,12 +17,12 @@
 </template>
 
 <script>
+    import {YamlUtils} from "@kestra-io/ui-libs";
     import EditorView from "../inputs/EditorView.vue";
     import {mapGetters, mapMutations, mapState} from "vuex";
     import RouteContext from "../../mixins/routeContext";
     import TopNavBar from "../../components/layout/TopNavBar.vue";
     import {apiUrl} from "override/utils/route";
-    import {YamlUtils} from "@kestra-io/ui-libs";
 
     export default {
         mixins: [RouteContext],
@@ -74,7 +75,7 @@ tasks:
             sourceWrapper() {
                 return {source: this.source};
             },
-            ...mapState("flow", ["flowGraph", "total"]),
+            ...mapState("flow", ["flowGraph"]),
             ...mapState("auth", ["user"]),
             ...mapState("plugin", ["pluginSingleList", "pluginsDocumentation"]),
             ...mapGetters("core", ["guidedProperties"]),

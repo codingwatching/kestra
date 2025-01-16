@@ -1,20 +1,22 @@
 package io.kestra.core.runners;
 
 import com.google.common.collect.ImmutableMap;
+import io.kestra.core.junit.annotations.ExecuteFlow;
+import io.kestra.core.junit.annotations.KestraTest;
+import io.kestra.core.junit.annotations.LoadFlows;
+import io.kestra.core.models.Label;
 import io.kestra.core.models.executions.Execution;
 import io.kestra.core.models.flows.Flow;
 import io.kestra.core.models.flows.FlowWithSource;
 import io.kestra.core.models.flows.State;
-import io.kestra.core.queues.QueueException;
+import io.kestra.core.models.property.Property;
 import io.kestra.core.repositories.ExecutionRepositoryInterface;
 import io.kestra.core.repositories.FlowRepositoryInterface;
 import io.kestra.core.repositories.LogRepositoryInterface;
-import io.kestra.core.repositories.MetricRepositoryInterface;
 import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.services.ExecutionService;
 import io.kestra.core.services.PluginDefaultService;
 import io.kestra.plugin.core.debug.Return;
-import io.micronaut.data.model.Pageable;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.RetryingTest;
@@ -23,13 +25,13 @@ import org.slf4j.event.Level;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeoutException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExecutionServiceTest extends AbstractMemoryRunnerTest {
+@KestraTest(startRunner = true)
+class ExecutionServiceTest {
     @Inject
     ExecutionService executionService;
 
@@ -45,7 +47,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
     @Inject
     LogRepositoryInterface logRepository;
 
+    @Inject
+    RunnerUtils runnerUtils;
+
     @Test
+    @LoadFlows({"flows/valids/restart_last_failed.yaml"})
     void restartSimple() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "restart_last_failed");
         assertThat(execution.getTaskRunList(), hasSize(3));
@@ -58,12 +64,13 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
         assertThat(restart.getTaskRunList(), hasSize(3));
         assertThat(restart.getTaskRunList().get(2).getState().getCurrent(), is(State.Type.RESTARTED));
         assertThat(restart.getTaskRunList().get(2).getState().getHistories(), hasSize(4));
-
         assertThat(restart.getId(), is(execution.getId()));
         assertThat(restart.getTaskRunList().get(2).getId(), is(execution.getTaskRunList().get(2).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.RESTARTED, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/restart_last_failed.yaml"})
     void restartSimpleRevision() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "restart_last_failed");
         assertThat(execution.getTaskRunList(), hasSize(3));
@@ -77,7 +84,7 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
                 Return.builder()
                     .id("a")
                     .type(Return.class.getName())
-                    .format("replace")
+                    .format(Property.of("replace"))
                     .build()
             ),
             JacksonMapper.ofYaml().writeValueAsString(flow),
@@ -92,12 +99,13 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
         assertThat(restart.getTaskRunList(), hasSize(3));
         assertThat(restart.getTaskRunList().get(2).getState().getCurrent(), is(State.Type.RESTARTED));
         assertThat(restart.getTaskRunList().get(2).getState().getHistories(), hasSize(4));
-
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(2).getId(), not(execution.getTaskRunList().get(2).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.RESTARTED, "true")));
     }
 
     @RetryingTest(5)
+    @LoadFlows({"flows/valids/restart-each.yaml"})
     void restartFlowable() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "restart-each", null, (f, e) -> ImmutableMap.of("failed", "FIRST"));
         assertThat(execution.getState().getCurrent(), is(State.Type.FAILED));
@@ -109,9 +117,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
         assertThat(restart.getTaskRunList().stream().filter(taskRun -> taskRun.getState().getCurrent() == State.Type.RESTARTED).count(), greaterThan(1L));
         assertThat(restart.getTaskRunList().stream().filter(taskRun -> taskRun.getState().getCurrent() == State.Type.RUNNING).count(), greaterThan(1L));
         assertThat(restart.getTaskRunList().getFirst().getId(), is(restart.getTaskRunList().getFirst().getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.RESTARTED, "true")));
     }
 
     @RetryingTest(5)
+    @LoadFlows({"flows/valids/restart-each.yaml"})
     void restartFlowable2() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "restart-each", null, (f, e) -> ImmutableMap.of("failed", "SECOND"));
         assertThat(execution.getState().getCurrent(), is(State.Type.FAILED));
@@ -123,9 +133,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
         assertThat(restart.getTaskRunList().stream().filter(taskRun -> taskRun.getState().getCurrent() == State.Type.RESTARTED).count(), greaterThan(1L));
         assertThat(restart.getTaskRunList().stream().filter(taskRun -> taskRun.getState().getCurrent() == State.Type.RUNNING).count(), greaterThan(1L));
         assertThat(restart.getTaskRunList().getFirst().getId(), is(restart.getTaskRunList().getFirst().getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.RESTARTED, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/working-directory.yaml"})
     void restartDynamic() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "working-directory", null, (f, e) -> ImmutableMap.of("failed", "true"));
         assertThat(execution.getTaskRunList(), hasSize(3));
@@ -137,9 +149,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
 
         assertThat(restart.getTaskRunList().getFirst().getState().getCurrent(), is(State.Type.RESTARTED));
         assertThat(restart.getTaskRunList().getFirst().getState().getHistories(), hasSize(4));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.RESTARTED, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/logs.yaml"})
     void replayFromBeginning() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "logs");
         assertThat(execution.getTaskRunList(), hasSize(5));
@@ -155,11 +169,12 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
         assertThat(restart.getState().getHistories(), hasSize(1));
         assertThat(restart.getState().getHistories().getFirst().getDate(), not(is(execution.getState().getStartDate())));
         assertThat(restart.getTaskRunList(), hasSize(0));
-
         assertThat(restart.getId(), not(execution.getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/logs.yaml"})
     void replaySimple() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "logs");
         assertThat(execution.getTaskRunList(), hasSize(5));
@@ -172,12 +187,13 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
         assertThat(restart.getTaskRunList(), hasSize(2));
         assertThat(restart.getTaskRunList().get(1).getState().getCurrent(), is(State.Type.RESTARTED));
         assertThat(restart.getTaskRunList().get(1).getState().getHistories(), hasSize(4));
-
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(1).getId(), not(execution.getTaskRunList().get(1).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/restart-each.yaml"})
     void replayFlowable() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "restart-each", null, (f, e) -> ImmutableMap.of("failed", "NO"));
         assertThat(execution.getTaskRunList(), hasSize(20));
@@ -189,12 +205,13 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
         assertThat(restart.getState().getHistories(), hasSize(4));
         assertThat(restart.getTaskRunList(), hasSize(20));
         assertThat(restart.getTaskRunList().get(19).getState().getCurrent(), is(State.Type.RESTARTED));
-
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(1).getId(), not(execution.getTaskRunList().get(1).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/parallel-nested.yaml"})
     void replayParallel() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "parallel-nested");
         assertThat(execution.getTaskRunList(), hasSize(11));
@@ -210,9 +227,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
 
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(1).getId(), not(execution.getTaskRunList().get(1).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/each-sequential-nested.yaml"})
     void replayEachSeq() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "each-sequential-nested");
         assertThat(execution.getTaskRunList(), hasSize(23));
@@ -228,9 +247,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
 
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(1).getId(), not(execution.getTaskRunList().get(1).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/each-sequential-nested.yaml"})
     void replayEachSeq2() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "each-sequential-nested");
         assertThat(execution.getTaskRunList(), hasSize(23));
@@ -246,9 +267,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
 
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(1).getId(), not(execution.getTaskRunList().get(1).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/dynamic-task.yaml"})
     void replayWithADynamicTask() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "dynamic-task");
         assertThat(execution.getTaskRunList(), hasSize(3));
@@ -264,9 +287,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
 
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(1).getId(), not(execution.getTaskRunList().get(1).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/each-parallel-nested.yaml"})
     void replayEachPara() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "each-parallel-nested");
         assertThat(execution.getTaskRunList(), hasSize(11));
@@ -282,9 +307,11 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
 
         assertThat(restart.getId(), not(execution.getId()));
         assertThat(restart.getTaskRunList().get(1).getId(), not(execution.getTaskRunList().get(1).getId()));
+        assertThat(restart.getLabels(), hasItem(new Label(Label.REPLAY, "true")));
     }
 
     @Test
+    @LoadFlows({"flows/valids/each-parallel-nested.yaml"})
     void markAsEachPara() throws Exception {
         Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "each-parallel-nested");
         Flow flow = flowRepository.findByExecution(execution);
@@ -315,6 +342,7 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
     }
 
     @Test
+    @LoadFlows({"flows/valids/pause.yaml"})
     void resumePausedToRunning() throws Exception {
         Execution execution = runnerUtils.runOneUntilPaused(null, "io.kestra.tests", "pause");
         Flow flow = flowRepository.findByExecution(execution);
@@ -334,6 +362,7 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
     }
 
     @Test
+    @LoadFlows({"flows/valids/pause.yaml"})
     void resumePausedToKilling() throws Exception {
         Execution execution = runnerUtils.runOneUntilPaused(null, "io.kestra.tests", "pause");
         Flow flow = flowRepository.findByExecution(execution);
@@ -348,8 +377,8 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
     }
 
     @Test
-    void deleteExecution() throws TimeoutException, QueueException, IOException {
-        Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "logs");
+    @ExecuteFlow("flows/valids/logs.yaml")
+    void deleteExecution(Execution execution) throws IOException {
         assertThat(execution.getState().getCurrent(), is(State.Type.SUCCESS));
 
         executionService.delete(execution, true, true, true);
@@ -359,13 +388,29 @@ class ExecutionServiceTest extends AbstractMemoryRunnerTest {
     }
 
     @Test
-    void deleteExecutionKeepLogs() throws TimeoutException, QueueException, IOException {
-        Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "logs");
+    @ExecuteFlow("flows/valids/logs.yaml")
+    void deleteExecutionKeepLogs(Execution execution) throws IOException {
         assertThat(execution.getState().getCurrent(), is(State.Type.SUCCESS));
 
         executionService.delete(execution, false, false, false);
 
         assertThat(executionRepository.findById(execution.getTenantId(),execution.getId()), is(Optional.empty()));
         assertThat(logRepository.findByExecutionId(execution.getTenantId(),execution.getId(), Level.INFO), hasSize(4));
+    }
+
+    @Test
+    @LoadFlows({"flows/valids/pause_no_tasks.yaml"})
+    void shouldKillPausedExecutions() throws Exception {
+        Execution execution = runnerUtils.runOneUntilPaused(null, "io.kestra.tests", "pause_no_tasks");
+        Flow flow = flowRepository.findByExecution(execution);
+
+        assertThat(execution.getTaskRunList(), hasSize(1));
+        assertThat(execution.getState().getCurrent(), is(State.Type.PAUSED));
+
+        Execution killed = executionService.kill(execution, flow);
+
+        assertThat(killed.getState().getCurrent(), is(State.Type.RESTARTED));
+        assertThat(killed.findTaskRunsByTaskId("pause").getFirst().getState().getCurrent(), is(State.Type.KILLED));
+        assertThat(killed.getState().getHistories(), hasSize(4));
     }
 }

@@ -42,7 +42,9 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item v-if="localFlow" :label="$t('inputs')">
-                    <flow-run @execution-trigger="closeModal" :redirect="true" />
+                    <div class="w-100">
+                        <flow-run @execution-trigger="closeModal" :redirect="true" />
+                    </div>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -51,8 +53,6 @@
 
 
 <script>
-    import {h} from "vue";
-
     import FlowRun from "./FlowRun.vue";
     import {mapState} from "vuex";
     import Flash from "vue-material-design-icons/Flash.vue";
@@ -114,7 +114,7 @@
                     return;
                 }
                 else if (this.checkForTrigger) {
-                    this.$toast().confirm(h(FlowWarningDialog), () => (this.toggleModal()), true, null);
+                    this.$toast().confirm(FlowWarningDialog, () => (this.toggleModal()), true, null);
                 }
                 else if (this.computedNamespace !== undefined && this.computedFlowId !== undefined) {
                     this.toggleModal()

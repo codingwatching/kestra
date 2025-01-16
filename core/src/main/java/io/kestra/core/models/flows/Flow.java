@@ -2,6 +2,7 @@ package io.kestra.core.models.flows;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -32,10 +33,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +78,15 @@ public class Flow extends AbstractFlow implements HasUID {
 
     @Valid
     List<Task> errors;
+
+    @Valid
+    @JsonProperty("finally")
+    @Getter(AccessLevel.NONE)
+    protected List<Task> _finally;
+
+    public List<Task> getFinally() {
+        return this._finally;
+    }
 
     @Valid
     @Deprecated
@@ -188,6 +195,7 @@ public class Flow extends AbstractFlow implements HasUID {
         return Stream.of(
                 this.tasks != null ? this.tasks : new ArrayList<Task>(),
                 this.errors != null ? this.errors : new ArrayList<Task>(),
+                this._finally != null ? this._finally : new ArrayList<Task>(),
                 this.listenersTasks()
             )
             .flatMap(Collection::stream);
@@ -268,6 +276,10 @@ public class Flow extends AbstractFlow implements HasUID {
             .orElse(null);
     }
 
+    /**
+     * @deprecated should not be used
+     */
+    @Deprecated(forRemoval = true, since = "0.21.0")
     public Flow updateTask(String taskId, Task newValue) throws InternalException {
         Task task = this.findTaskByTaskId(taskId);
         Flow flow = this instanceof FlowWithSource flowWithSource ? flowWithSource.toFlow() : this;
@@ -357,8 +369,12 @@ public class Flow extends AbstractFlow implements HasUID {
         }
     }
 
+    /**
+     * Convenience method to generate the source of a flow.
+     * Equivalent to <code>FlowService.generateSource(this);</code>
+     */
     public String generateSource() {
-        return FlowService.generateSource(this, null);
+        return FlowService.generateSource(this);
     }
 
     public Flow toDeleted() {

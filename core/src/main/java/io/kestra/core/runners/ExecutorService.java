@@ -15,6 +15,7 @@ import io.kestra.core.queues.QueueFactoryInterface;
 import io.kestra.core.queues.QueueInterface;
 import io.kestra.core.services.*;
 import io.kestra.core.utils.ListUtils;
+import io.kestra.core.utils.TruthUtils;
 import io.kestra.plugin.core.flow.Pause;
 import io.kestra.plugin.core.flow.Subflow;
 import io.kestra.plugin.core.flow.WaitFor;
@@ -269,7 +270,8 @@ public class ExecutorService {
                 // Then wait for completion (KILLED or whatever) on child tasks to KILLED the parent one.
                 List<ResolvedTask> currentTasks = execution.findTaskDependingFlowState(
                     flowableParent.childTasks(runContext, parentTaskRun),
-                    FlowableUtils.resolveTasks(flowableParent.getErrors(), parentTaskRun)
+                    FlowableUtils.resolveTasks(flowableParent.getErrors(), parentTaskRun),
+                    FlowableUtils.resolveTasks(flowableParent.getFinally(), parentTaskRun)
                 );
 
                 List<TaskRun> taskRunByTasks = execution.findTaskRunByTasks(currentTasks, parentTaskRun);
@@ -323,9 +325,7 @@ public class ExecutorService {
                 );
 
                 if (!nexts.isEmpty()) {
-                    return nexts.stream()
-                        .map(throwFunction(NextTaskRun::getTaskRun))
-                        .toList();
+                    return saveFlowableOutput(nexts, executor);
                 }
             } catch (Exception e) {
                 log.warn("Unable to resolve the next tasks to run", e);
@@ -379,7 +379,9 @@ public class ExecutorService {
         if (flow.getOutputs() != null) {
             RunContext runContext = runContextFactory.of(executor.getFlow(), executor.getExecution());
             try {
-                Map<String, Object> outputs = flowInputOutput.flowOutputsToMap(flow.getOutputs());
+                Map<String, Object> outputs = flow.getOutputs()
+                    .stream()
+                    .collect(HashMap::new, (map, entry) -> map.put(entry.getId(), entry.getValue()), Map::putAll);
                 outputs = runContext.render(outputs);
                 outputs = flowInputOutput.typedOutputs(flow, executor.getExecution(), outputs);
                 newExecution = newExecution.withOutputs(outputs);
@@ -425,7 +427,8 @@ public class ExecutorService {
             .resolveSequentialNexts(
                 executor.getExecution(),
                 ResolvedTask.of(executor.getFlow().getTasks()),
-                ResolvedTask.of(executor.getFlow().getErrors())
+                ResolvedTask.of(executor.getFlow().getErrors()),
+                ResolvedTask.of(executor.getFlow().getFinally())
             );
 
         if (nextTaskRuns.isEmpty()) {
@@ -685,7 +688,8 @@ public class ExecutorService {
 
         List<ResolvedTask> currentTasks = executor.getExecution().findTaskDependingFlowState(
             ResolvedTask.of(executor.getFlow().getTasks()),
-            ResolvedTask.of(executor.getFlow().getErrors())
+            ResolvedTask.of(executor.getFlow().getErrors()),
+            ResolvedTask.of(executor.getFlow().getFinally())
         );
 
         if (!executor.getExecution().isTerminated(currentTasks)) {
@@ -832,6 +836,17 @@ public class ExecutorService {
                         "handleExecutableTaskRunning"
                     );
 
+                    // handle runIf
+                    if (!TruthUtils.isTruthy(workerTask.getRunContext().render(workerTask.getTask().getRunIf()))) {
+                        executor.withExecution(
+                            executor
+                                .getExecution()
+                                .withTaskRun(executableTaskRun.withState(State.Type.SKIPPED)),
+                            "handleExecutableTaskSkipped"
+                        );
+                        return false;
+                    }
+
                     RunContext runContext = runContextFactory.of(
                         executor.getFlow(),
                         executableTask,
@@ -904,12 +919,13 @@ public class ExecutorService {
                         "handleExecutionUpdatingTask.updateExecution"
                     );
 
+                    var taskState = executionUpdatingTask.resolveState(workerTask.getRunContext(), executor.getExecution()).orElse(State.Type.SUCCESS);
                     workerTaskResults.add(
                         WorkerTaskResult.builder()
                             .taskRun(workerTask.getTaskRun().withAttempts(
-                                        Collections.singletonList(TaskRunAttempt.builder().state(new State().withState(State.Type.SUCCESS)).build())
+                                        Collections.singletonList(TaskRunAttempt.builder().state(new State().withState(taskState)).build())
                                     )
-                                    .withState(State.Type.SUCCESS)
+                                    .withState(taskState)
                             )
                             .build()
                     );

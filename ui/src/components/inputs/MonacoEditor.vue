@@ -1,5 +1,5 @@
 <template>
-    <div class="monaco-editor" />
+    <div class="ks-monaco-editor" />
 </template>
 
 <script>
@@ -445,7 +445,7 @@
                                 deleted: true
                             }
                         )).inputs?.map(input => input.id) ?? [];
-                    } catch (e) {
+                    } catch {
                         return undefined;
                     }
                 }
@@ -540,6 +540,9 @@
                     break;
                 case "task":
                     autocompletions = ["id", "type"];
+                    break;
+                case "taskrun":
+                    autocompletions = ["id", "startDate", "attemptsCount", "parentId", "value", "iteration"];
                     break;
                 case "error":
                     autocompletions = ["taskId", "message", "stackTrace"];
@@ -714,19 +717,22 @@
 </script>
 
 <style scoped lang="scss">
-    .monaco-editor {
+    .ks-monaco-editor {
         position: absolute;
         width: 100%;
         height: 100%;
         outline: none;
+    }
+
+    .main-editor > #editorWrapper .monaco-editor {
         padding: 1rem 0 0 1rem;
     }
 </style>
 
 <style lang="scss">
-    @import "../../styles/layout/root-dark.scss";
+    @import "../../styles/layout/root-dark";
 
-    .custom-dark-vs-theme .monaco-editor .sticky-widget {
+    .custom-dark-vs-theme .ks-monaco-editor .sticky-widget {
         background-color: $input-bg;
     }
 </style>

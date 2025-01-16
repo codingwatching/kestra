@@ -1,5 +1,17 @@
 <template>
     <div class="attempt-header">
+        <div>
+            <el-icon
+                v-if="!taskRunId && shouldDisplayChevron(currentTaskRun)"
+                type="default"
+                @click.stop="() => forwardEvent('toggleShowAttempt',(attemptUid(currentTaskRun.id, selectedAttemptNumberByTaskRunId[currentTaskRun.id])))"
+            >
+                <ChevronDown
+                    v-if="shownAttemptsUid.includes(attemptUid(currentTaskRun.id, selectedAttemptNumberByTaskRunId[currentTaskRun.id]))"
+                />
+                <ChevronRight v-else />
+            </el-icon>
+        </div>
         <div class="task-icon d-none d-md-inline-block me-1">
             <task-icon
                 :cls="taskType(currentTaskRun)"
@@ -60,7 +72,7 @@
         </el-select>
 
         <el-dropdown trigger="click">
-            <el-button type="default" class="more-dropdown-button">
+            <el-button type="default" class="task-run-buttons">
                 <DotsHorizontal title="" />
             </el-button>
             <template #dropdown>
@@ -124,24 +136,11 @@
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
-
-        <el-button
-            v-if="!taskRunId && shouldDisplayChevron(currentTaskRun)"
-            class="border-0 expand-collapse"
-            type="default"
-            text
-            @click.stop="() => forwardEvent('toggleShowAttempt',(attemptUid(currentTaskRun.id, selectedAttemptNumberByTaskRunId[currentTaskRun.id])))"
-        >
-            <ChevronUp
-                v-if="shownAttemptsUid.includes(attemptUid(currentTaskRun.id, selectedAttemptNumberByTaskRunId[currentTaskRun.id]))"
-            />
-            <ChevronDown v-else />
-        </el-button>
     </div>
 </template>
 <script>
     import Restart from "./Restart.vue";
-    import ChevronUp from "vue-material-design-icons/ChevronUp.vue";
+    import ChevronRight from "vue-material-design-icons/ChevronRight.vue";
     import Metrics from "./Metrics.vue";
     import Status from "../Status.vue";
     import ChangeStatus from "./ChangeStatus.vue";
@@ -151,13 +150,13 @@
     import ChevronDown from "vue-material-design-icons/ChevronDown.vue";
     import Clock from "vue-material-design-icons/Clock.vue";
     import Outputs from "./Outputs.vue";
-    import State from "../../utils/state";
+    import {State} from "@kestra-io/ui-libs"
     import FlowUtils from "../../utils/flowUtils";
     import {mapState} from "vuex";
     import {SECTIONS} from "../../utils/constants";
     import Download from "vue-material-design-icons/Download.vue";
     import _groupBy from "lodash/groupBy";
-    import TaskIcon from "@kestra-io/ui-libs/src/components/misc/TaskIcon.vue";
+    import {TaskIcon} from "@kestra-io/ui-libs";
     import Duration from "../layout/Duration.vue";
     import Utils from "../../utils/utils";
     import Delete from "vue-material-design-icons/Delete.vue";
@@ -176,7 +175,7 @@
             ChangeStatus,
             Status,
             Metrics,
-            ChevronUp,
+            ChevronRight,
             Restart,
             Duration
         },
@@ -322,7 +321,7 @@
 
     .attempt-header {
         display: flex;
-        gap: calc(var(--spacer) / 2);
+        gap: .5rem;
 
         > * {
             display: flex;
@@ -337,10 +336,6 @@
             background: var(--bs-gray-400);
             padding: .375rem .75rem;
             white-space: nowrap;
-
-            html.dark & {
-                color: var(--bs-gray-600);
-            }
         }
 
         .task-id, .task-duration {
@@ -353,7 +348,8 @@
             text-overflow: ellipsis;
 
             span span {
-                color: var(--bs-tertiary-color);
+                color: var(--ks-content-primary);
+                font-size: 14px;
 
                 html:not(.dark) & {
                     color: $black;
@@ -375,21 +371,18 @@
         .task-duration small {
             white-space: nowrap;
 
-            color: var(--bs-gray-800);
+            color: var(--ks-content-secondary);
         }
 
-        .more-dropdown-button {
+        .task-run-buttons {
             padding: .5rem;
-            height: 100%; 
+            height: 100%;
             border: 1px solid rgba($white, .05);
-
+            background-color: var(--ks-button-background-secondary) !important;
+            // FIXME: what does this mean?
             &:not(:hover) {
                 background: rgba($white, .10);
             }
-        }
-
-        .expand-collapse {
-            background-color: transparent !important;
         }
     }
 </style>

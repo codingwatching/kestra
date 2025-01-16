@@ -24,7 +24,11 @@
                         :size-dependencies="[selectedTaskRuns]"
                     >
                         <div class="d-flex flex-column">
-                            <div class="gantt-row d-flex">
+                            <div class="gantt-row d-flex cursor-icon" @click="onTaskSelect(item.id)">
+                                <div class="d-inline-flex">
+                                    <ChevronRight v-if="!selectedTaskRuns.includes(item.id)" />
+                                    <ChevronDown v-else />
+                                </div>
                                 <el-tooltip placement="top-start" :persistent="false" transition="" :hide-after="0" effect="light">
                                     <template #content>
                                         <code>{{ item.name }}</code>
@@ -35,7 +39,18 @@
                                         <small v-if="item.task && item.task.value"> {{ item.task.value }}</small>
                                     </span>
                                 </el-tooltip>
-                                <div @click="onTaskSelect(item.id)" class="cursor-pointer" :style="'width: ' + (100 / (dates.length + 1)) * dates.length + '%'">
+                                <div>
+                                    <el-tooltip placement="right" :persistent="false" :hide-after="0" effect="light">
+                                        <template #content>
+                                            <span>This task has {{ item.attempts }} attempts.</span>
+                                        </template>
+                                        <Warning 
+                                            v-if="item.attempts > 1" 
+                                            class="attempt_warn me-3" 
+                                        />
+                                    </el-tooltip>
+                                </div>
+                                <div :style="'width: ' + (100 / (dates.length + 1)) * dates.length + '%'">
                                     <el-tooltip placement="top" :persistent="false" transition="" :hide-after="0" effect="light">
                                         <template #content>
                                             <span style="white-space: pre-wrap;">
@@ -58,7 +73,7 @@
                                     </el-tooltip>
                                 </div>
                             </div>
-                            <div v-if="selectedTaskRuns.includes(item.id)" class="p-0">
+                            <div v-if="selectedTaskRuns.includes(item.id)" class="p-2">
                                 <task-run-details
                                     :task-run-id="item.id"
                                     :exclude-metas="['namespace', 'flowId', 'taskId', 'executionId']"
@@ -67,7 +82,7 @@
                                     :target-execution="execution"
                                     :target-flow="flow"
                                     :show-logs="taskTypeByTaskRunId[item.id] !== 'io.kestra.plugin.core.flow.ForEachItem' && taskTypeByTaskRunId[item.id] !== 'io.kestra.core.tasks.flows.ForEachItem'"
-                                    class="mh-100"
+                                    class="mh-100 mx-3"
                                 />
                             </div>
                         </div>
@@ -80,17 +95,21 @@
 <script>
     import TaskRunDetails from "../logs/TaskRunDetails.vue";
     import {mapState} from "vuex";
-    import State from "../../utils/state";
+    import {State} from "@kestra-io/ui-libs"
     import Duration from "../layout/Duration.vue";
     import Utils from "../../utils/utils";
     import FlowUtils from "../../utils/flowUtils";
     import "vue-virtual-scroller/dist/vue-virtual-scroller.css"
     import {DynamicScroller, DynamicScrollerItem} from "vue-virtual-scroller";
+    import ChevronRight from "vue-material-design-icons/ChevronRight.vue";
+    import ChevronDown from "vue-material-design-icons/ChevronDown.vue";
+    import Warning from "vue-material-design-icons/Alert.vue"
+
 
     const ts = date => new Date(date).getTime();
     const TASKRUN_THRESHOLD = 50
     export default {
-        components: {DynamicScroller, DynamicScrollerItem, TaskRunDetails, Duration},
+        components: {DynamicScroller,Warning, DynamicScrollerItem, TaskRunDetails, Duration, ChevronRight, ChevronDown},
         data() {
             return {
                 colors: State.colorClass(),
@@ -109,7 +128,9 @@
                     this.selectedTaskRuns = [];
                     this.paint();
                 }
-                newValue.state?.current === State.SUCCESS && (this.compute());
+                if(newValue.state?.current === State.SUCCESS){
+                    this.compute()
+                }
             },
             forEachItemsTaskRunIds: {
                 handler(newValue, oldValue) {
@@ -279,7 +300,8 @@
                         task,
                         flowId: task.flowId,
                         namespace: task.namespace,
-                        executionId: task.outputs && task.outputs.executionId
+                        executionId: task.outputs && task.outputs.executionId,
+                        attempts: task.attempts ? task.attempts.length : 1
                     });
                 }
                 this.series = series;
@@ -316,6 +338,7 @@
         }
     };
 </script>
+
 <style lang="scss" scoped>
     .el-card {
         padding: 0;
@@ -327,7 +350,7 @@
 
             > div {
                 > * {
-                    padding: calc(var(--spacer) / 2);
+                    padding: .5rem;
                     flex: 1;
                 }
 
@@ -356,7 +379,7 @@
                 }
 
                 &::-webkit-scrollbar-thumb {
-                    background: var(--bs-primary);
+                    background: var(--ks-button-background-primary);
                 }
             }
 
@@ -367,7 +390,7 @@
                 }
 
                 > * {
-                    padding: calc(var(--spacer) / 2);
+                    padding: 1rem .5rem;
                 }
 
                 .el-tooltip__trigger {
@@ -379,12 +402,18 @@
                     small {
                         margin-left: 5px;
                         font-family: var(--bs-font-monospace);
-                        font-size: var(--font-size-xs)
+                        font-size: var(--font-size-xs);
                     }
 
                     code {
-                        font-size: 0.7rem;
+                        font-size: var(--font-size-xs);
+                        color: var(--ks-content-primary);
                     }
+                }
+                
+                .attempt_warn{
+                    color: var(--el-color-warning);
+                    vertical-align: middle;
                 }
 
                 .task-progress {
@@ -393,15 +422,14 @@
                     min-width: 5px;
 
                     .progress {
-                        height: 21px;
+                        height: 25px;
                         border-radius: var(--bs-border-radius-sm);
-                        position: relative;
-                        cursor: pointer;
                         background-color: var(--bs-gray-200);
+                        cursor: pointer;
 
                         .progress-bar {
                             position: absolute;
-                            height: 21px;
+                            height: 25px;
                             transition: none;
                         }
                     }
@@ -410,34 +438,24 @@
         }
     }
 
-    .cursor-pointer {
+
+    // To Separate through Line
+    :deep(.vue-recycle-scroller__item-view) {
+        border-bottom: 1px solid var(--ks-border-primary);
+        margin-bottom: 10px;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .cursor-icon {
         cursor: pointer;
     }
 
     :deep(.log-wrapper) {
         > .vue-recycle-scroller__item-wrapper > .vue-recycle-scroller__item-view > div {
-            padding-bottom: 0;
-        }
-
-        .attempt-wrapper {
-            margin-bottom: 0;
-            border-radius: 0;
-            border: 0;
-            border-top: 1px solid var(--bs-gray-600);
-            border-bottom: 1px solid var(--bs-gray-600);
-
-            tbody:last-child & {
-                border-bottom: 0;
-            }
-
-            .attempt-header {
-                padding: calc(var(--spacer) / 2);
-            }
-
-            .line {
-                padding-left: calc(var(--spacer) / 2);
-            }
+            border-radius: var(--bs-border-radius-lg);
         }
     }
-
 </style>

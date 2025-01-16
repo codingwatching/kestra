@@ -4,19 +4,22 @@
             <ul>
                 <li>
                     <div class="el-input el-input-file custom-upload">
-                        <div class="el-input__wrapper">
-                            <label for="importFlows">
-                                <Upload />
-                                {{ $t('import') }}
-                            </label>
-                            <input
-                                id="importFlows"
-                                class="el-input__inner"
-                                type="file"
-                                @change="importFlows()"
-                                ref="file"
-                            >
-                        </div>
+                        <form ref="importForm">
+                            <div class="el-input__wrapper">
+                                <label for="importFlows">
+                                    <Upload />
+                                    {{ $t('import') }}
+                                </label>
+                                <input
+                                    id="importFlows"
+                                    class="el-input__inner"
+                                    type="file"
+                                    accept=".zip, .yml, .yaml"
+                                    @change="importFlows()"
+                                    ref="file"
+                                >
+                            </div>
+                        </form>
                     </div>
                 </li>
                 <li>
@@ -47,7 +50,10 @@
                     <KestraFilter
                         prefix="flows"
                         :include="['namespace', 'scope', 'labels']"
-                        :settings="{shown: true, charts: {shown: true, value: showChart, callback: onShowChartChange}}"
+                        :buttons="{
+                            refresh: {shown: false},
+                            settings: {shown: true, charts: {shown: true, value: showChart, callback: onShowChartChange}}
+                        }"
                     />
                 </template>
 
@@ -70,6 +76,7 @@
                         :row-class-name="rowClasses"
                         @selection-change="handleSelectionChange"
                         :selectable="canCheck"
+                        class="flows-table"
                     >
                         <template #select-actions>
                             <bulk-select
@@ -158,6 +165,7 @@
                                 class-name="row-graph"
                             >
                                 <template #default="scope">
+                                    <!-- TODO: Replace the usage of StateChart with one of the new chart components -->
                                     <state-chart
                                         :duration="true"
                                         :namespace="scope.row.namespace"
@@ -187,8 +195,6 @@
                             </el-table-column>
                         </template>
                     </select-table>
-
-                    <NoData v-else />
                 </template>
             </data-table>
         </div>
@@ -204,7 +210,6 @@
     import TrashCan from "vue-material-design-icons/TrashCan.vue";
     import FileDocumentRemoveOutline from "vue-material-design-icons/FileDocumentRemoveOutline.vue";
     import FileDocumentCheckOutline from "vue-material-design-icons/FileDocumentCheckOutline.vue";
-    import NoData from "../layout/NoData.vue";
 
     import KestraFilter from "../filter/KestraFilter.vue"
 </script>
@@ -313,7 +318,7 @@
             const defaultNamespace = localStorage.getItem(storageKeys.DEFAULT_NAMESPACE);
             const query = {...to.query};
             if (defaultNamespace) {
-                query.namespace = defaultNamespace; 
+                query.namespace = defaultNamespace;
             } if (!query.scope) {
                 query.scope = ["USER"];
             }
@@ -467,6 +472,7 @@
                         } else {
                             this.$toast().success(this.$t("flows imported"));
                         }
+                        this.$refs.importForm.reset();
                         this.loadData(() => {
                         })
                     })
@@ -496,6 +502,10 @@
             },
             loadQuery(base) {
                 let queryFilter = this.queryWithFilter();
+
+                if(this.namespace){
+                    queryFilter.namespace = this.namespace
+                }
 
                 return _merge(base, queryFilter)
             },
@@ -571,5 +581,9 @@
 
     .flow-id {
         min-width: 200px;
+    }
+
+    .flows-table  .el-table__cell {
+        vertical-align: middle;
     }
 </style>

@@ -6,15 +6,10 @@
         :image="headerImage"
         :image-dark="headerImageDark"
     >
-        <el-row class="my-4">
-            <el-input
-                class="search"
-                :placeholder="$t('pluginPage.search', {count: countPlugin})"
-                v-model="searchInput"
-                clearable
-            />
+        <el-row class="my-4 px-3">
+            <KestraFilter :placeholder="$t('pluginPage.search', {count: countPlugin})" :search-callback="(input)=> searchInput = input" />
         </el-row>
-        <section class="plugins-container">
+        <section class="px-3 plugins-container">
             <el-tooltip v-for="(plugin, index) in pluginsList" :show-after="1000" :key="index" effect="light">
                 <template #content>
                     <div class="tasks-tooltips">
@@ -80,10 +75,11 @@
 </template>
 
 <script>
-    import TaskIcon from "@kestra-io/ui-libs/src/components/misc/TaskIcon.vue";
+    import {TaskIcon} from "@kestra-io/ui-libs";
     import DottedLayout from "../layout/DottedLayout.vue";
     import headerImage from "../../assets/icons/plugin.svg";
     import headerImageDark from "../../assets/icons/plugin-dark.svg";
+    import KestraFilter from "../filter/KestraFilter.vue";
 
     export default {
         props: {
@@ -98,7 +94,8 @@
         },
         components: {
             DottedLayout,
-            TaskIcon
+            TaskIcon,
+            KestraFilter
         },
         data() {
             return {
@@ -199,7 +196,6 @@
         display: grid;
         gap: 16px;
         grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
-        margin: 0 2rem;
         padding-bottom: 4rem;
     }
 
@@ -227,7 +223,7 @@
 
         &::-webkit-scrollbar-thumb {
             -webkit-border-radius: 10px;
-            background: var(--bs-primary);
+            background: var(--ks-button-background-primary);
         }
     }
 
@@ -239,20 +235,20 @@
         align-items: center;
         gap: 8px;
         border-radius: 4px;
-        border: 1px solid var(--bs-gray-300);
-        background-color: white;
-
-        html.dark & {
-            background-color: var(--bs-tertiary);
-            border-color: #404559;
-        }
-
-        color: var(--text-color-primary);
         text-overflow: ellipsis;
         font-size: 12px;
         font-weight: 700;
         line-height: 26px;
         cursor: pointer;
+
+        border: 1px solid var(--ks-border-primary);
+        background-color: var(--ks-button-background-secondary);
+        color: var(--ks-content-primary);
+
+        &:hover{
+            border-color: var(--ks-border-active);
+            background-color: var(--ks-button-background-secondary-hover);
+        }
     }
 
     .size {
