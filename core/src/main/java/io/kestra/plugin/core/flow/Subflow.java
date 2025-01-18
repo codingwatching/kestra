@@ -8,7 +8,6 @@ import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.executions.Execution;
-import io.kestra.core.models.flows.Flow;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.executions.TaskRun;
 import io.kestra.core.models.executions.TaskRunAttempt;
@@ -39,11 +38,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuperBuilder
 @ToString
@@ -51,14 +47,16 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Create a subflow execution. Subflows offer a modular way to reuse workflow logic by calling other flows just like calling a function in a programming language."
+    title = "Create a subflow execution. Subflows offer a modular way to reuse workflow logic by calling other flows just like calling a function in a programming language.",
+    description = "Restarting a parent flow will restart any subflows that has previously been executed."
 )
 @Plugin(
     examples = {
         @Example(
             title = "Run a subflow with custom inputs.",
+            full = true,
             code = """
-                id: running_subflow
+                id: parent_flow
                 namespace: company.team
 
                 tasks:
@@ -67,8 +65,8 @@ import java.util.Optional;
                     namespace: company.team
                     flowId: subflow
                     inputs:
-                      user: "Rick Astley"
-                      favorite_song: "Never Gonna Give You Up"
+                      user: Rick Astley
+                      favorite_song: Never Gonna Give You Up
                     wait: true
                     transmitFailed: true
                 """
@@ -154,13 +152,24 @@ public class Subflow extends Task implements ExecutableTask<Subflow.Output>, Chi
 
     @Schema(
         title = "Don't trigger the subflow now but schedule it on a specific date."
-   )
+    )
     private Property<ZonedDateTime> scheduleDate;
+
+    @Schema(
+        title = "What to do when a failed execution is restarting.",
+        description = """
+            - RETRY_FAILED (default): will restart the subflow execution if it's failed.
+            - NEW_EXECUTION: will create a new subflow execution.""
+            """
+    )
+    @NotNull
+    @Builder.Default
+    private RestartBehavior restartBehavior = RestartBehavior.RETRY_FAILED;
 
     @Override
     public List<SubflowExecution<?>> createSubflowExecutions(RunContext runContext,
                                                              FlowExecutorInterface flowExecutorInterface,
-                                                             Flow currentFlow,
+                                                             io.kestra.core.models.flows.Flow currentFlow,
                                                              Execution currentExecution,
                                                              TaskRun currentTaskRun) throws InternalException {
         Map<String, Object> inputs = new HashMap<>();
@@ -168,7 +177,7 @@ public class Subflow extends Task implements ExecutableTask<Subflow.Output>, Chi
             inputs.putAll(runContext.render(this.inputs));
         }
 
-        return List.of(ExecutableUtils.subflowExecution(
+        return ExecutableUtils.subflowExecution(
             runContext,
             flowExecutorInterface,
             currentExecution,
@@ -179,14 +188,16 @@ public class Subflow extends Task implements ExecutableTask<Subflow.Output>, Chi
             labels,
             inheritLabels,
             scheduleDate
-        ));
+        )
+            .<List<SubflowExecution<?>>>map(subflowExecution -> List.of(subflowExecution))
+            .orElse(Collections.emptyList());
     }
 
     @Override
     public Optional<SubflowExecutionResult> createSubflowExecutionResult(
         RunContext runContext,
         TaskRun taskRun,
-        Flow flow,
+        io.kestra.core.models.flows.Flow flow,
         Execution execution
     ) {
         // we only create a worker task result when the execution is terminated
@@ -202,16 +213,25 @@ public class Subflow extends Task implements ExecutableTask<Subflow.Output>, Chi
             .executionId(execution.getId())
             .state(execution.getState().getCurrent());
 
-        FlowInputOutput flowInputOutput = ((DefaultRunContext)runContext).getApplicationContext().getBean(FlowInputOutput.class); // this is hacking
         final Map<String, Object> subflowOutputs = Optional
             .ofNullable(flow.getOutputs())
-            .map(outputs -> flowInputOutput.flowOutputsToMap(flow.getOutputs()))
-            .map(outputs -> flowInputOutput.typedOutputs(flow, execution, outputs))
+            .map(outputs -> outputs
+                .stream()
+                .collect(Collectors.toMap(
+                    io.kestra.core.models.flows.Output::getId,
+                    io.kestra.core.models.flows.Output::getValue)
+                )
+            )
             .orElseGet(() -> isOutputsAllowed ? this.getOutputs() : null);
 
         if (subflowOutputs != null) {
             try {
-                builder.outputs(runContext.render(subflowOutputs));
+                Map<String, Object> outputs = runContext.render(subflowOutputs);
+                FlowInputOutput flowInputOutput = ((DefaultRunContext)runContext).getApplicationContext().getBean(FlowInputOutput.class); // this is hacking
+                if (flow.getOutputs() != null && flowInputOutput != null) {
+                    outputs = flowInputOutput.typedOutputs(flow, execution, outputs);
+                }
+                builder.outputs(outputs);
             } catch (Exception e) {
                 runContext.logger().warn("Failed to extract outputs with the error: '{}'", e.getLocalizedMessage(), e);
                 var state = this.isAllowFailure() ? this.isAllowWarning() ? State.Type.SUCCESS : State.Type.WARNING : State.Type.FAILED;

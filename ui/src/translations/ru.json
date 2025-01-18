@@ -435,10 +435,7 @@
     "show documentation": "Показать документацию",
     "focus task": "Нажмите на любой элемент, чтобы увидеть его документацию.",
     "validate": "Проверить",
-    "add global error handler": "Добавить глобальный обработчик ошибок",
     "add error handler": "Добавить обработчик ошибок",
-    "add trigger": "Добавить trigger",
-    "edit metadata": "Редактировать метаданные",
     "taskDefaults": "Задача по умолчанию",
     "disabled": "Отключено",
     "before": "до",
@@ -647,20 +644,17 @@
     "execution-warn-deleting-still-running": "Мы настоятельно рекомендуем отменить это действие и сначала завершить все текущие executions. Удаление незавершенных executions может привести к проблемам с concurrency, несоответствиям в управлении зависимостями flow и появлению \"зомби\"-процессов на вашем экземпляре, что может ухудшить производительность системы. Убедитесь, что вы полностью понимаете эти риски, прежде чем продолжить удаление.",
     "originalCreatedDate": "Оригинальная дата создания",
     "welcome": {
-      "started": {
-        "title": "Начните в 3 простых шага"
-      },
-      "product-tour": {
-        "title": "Пройдите экскурсию по продукту"
-      },
-      "doc": {
-        "title": "Документы"
-      },
-      "need-help": {
-        "title": "Нужна помощь?"
-      },
       "tutorial": {
-        "title": "Учебник"
+        "title": "Учебник",
+        "text": "* [Видеоуроки](https://kestra.io/tutorial-videos/all)\n* [Документация](https://kestra.io/docs)\n* [Blueprints](https://kestra.io/blueprints)"
+      },
+      "tour": {
+        "title": "Пройдите экскурсию по продукту",
+        "text": "Выберите ваш вариант использования и следуйте пошаговому руководству, чтобы изучить возможности и функции Kestra. ❤️"
+      },
+      "help": {
+        "text": "Задайте любой вопрос в нашем сообществе Slack. Если вы застряли, мы здесь, чтобы помочь вам. ✋",
+        "title": "Нужна помощь?"
       }
     },
     "pluginPage": {
@@ -680,7 +674,8 @@
             "log_level": "Уровень логов по умолчанию",
             "log_display": "Отображение логов по умолчанию",
             "execute_flow": "Выполнить Flow",
-            "execute_default_tab": "Вкладка выполнения по умолчанию"
+            "execute_default_tab": "Вкладка выполнения по умолчанию",
+            "editor_type": "Тип редактора по умолчанию"
           }
         },
         "theme": {
@@ -697,7 +692,8 @@
               "label": "Цветовая схема диаграммы",
               "classic": "Классический",
               "kestra": "Kestra"
-            }
+            },
+            "logs_font_size": "Размер шрифта Logs"
           }
         },
         "localization": {
@@ -874,14 +870,17 @@
       "not_auth": "У вас нет необходимых разрешений для просмотра этого виджета.",
       "see_all": "Посмотреть все",
       "success_ratio_tooltip": "Коэффициент успеха — это сумма выполнений в состояниях SUCCESS, CANCELLED и WARNING, деленная на общее количество выполнений в завершенном состоянии.",
-      "failure_ratio_tooltip": "Отношение Failed — это сумма выполнений в состояниях FAILED, KILLED и RETRIED, деленная на общее количество выполнений в завершенном состоянии."
+      "failure_ratio_tooltip": "Отношение Failed — это сумма выполнений в состояниях FAILED, KILLED и RETRIED, деленная на общее количество выполнений в завершенном состоянии.",
+      "preview": "Предварительный просмотр Dashboard"
     },
     "delete_log": "Вы уверены, что хотите удалить log?",
     "docs": "Документы",
     "behavior": "Поведение",
     "concurrency-view": {
-      "desc_no_limit": "Прочитайте больше о <a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">Concurrency Limits</a> в нашей документации.",
-      "title_no_limit": "Для этого Flow не установлены ограничения."
+      "desc_no_limit": "Узнайте больше о <strong><a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">ограничениях Concurrency</a></strong> в нашей документации.",
+      "title_no_limit": "Для этого Flow не установлены ограничения.",
+      "desc_no_executions": "Узнайте больше о <strong><a href=\"https://kestra.io/docs/workflow-components/execution\" target=\"_blank\">Executions</a></strong> в нашей документации.",
+      "title_no_executions": "Нет выполняющихся Executions для этого Flow."
     },
     "active-slots": "Активные слоты",
     "concurrency": "Конкурентность",
@@ -906,8 +905,8 @@
     "no_data": "Похоже, здесь пока ничего нет…<br/>Измените фильтры или попробуйте снова!",
     "informative notice": "Примечание(я)",
     "triggers-view": {
-      "desc_no_triggers": "Узнайте больше о <a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a> в нашей документации.",
-      "title_no_triggers": "Ваш flow не имеет никаких Triggers."
+      "desc_no_triggers": "Узнайте больше о <strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a></strong> в нашей документации.",
+      "title_no_triggers": "Ваш flow не имеет Triggers."
     },
     "dependency-view": {
       "title_no_deps": "Для этого Flow зависимости не установлены.",
@@ -925,52 +924,6 @@
     "execution-warn-title": "Важное предупреждение!",
     "worker group key": "Ключ группы Worker",
     "worker group fallback": "Группа Worker резервный вариант",
-    "filters": {
-      "comparators": {
-        "is": "является",
-        "is_one_of": "является одним из",
-        "is_not_one_off": "не является одним из",
-        "is_not": "не является",
-        "between": "между",
-        "in": "в",
-        "not_contains": "не содержит",
-        "starts_with": "начинается с",
-        "contains": "содержит"
-      },
-      "recent": {
-        "label": "Недавние поиски",
-        "empty": "Вы еще ничего не искали."
-      },
-      "labels": {
-        "placeholder": "Введите label как 'key:value'"
-      },
-      "save": {
-        "dialog": {
-          "hint": "Как вы хотите обозначить этот критерий поиска?",
-          "heading": "Сохранить текущий поиск",
-          "confirmation": "Критерии поиска <code>{name}</code>",
-          "placeholder": "Метка"
-        },
-        "label": "Сохраненные поиски",
-        "tooltip": "Вы не можете сохранить пустые критерии поиска."
-      },
-      "options": {
-        "namespace": "Namespace",
-        "scope": "Область применения",
-        "text": "Извините, но вы не предоставили текст для перевода. Пожалуйста, вставьте текст, который вы хотите перевести, после \"----------\".",
-        "labels": "Метки",
-        "state": "Состояние",
-        "child": "Ребенок",
-        "absolute_date": "Абсолютная дата",
-        "relative_date": "Относительная дата",
-        "level": "Уровень Log"
-      },
-      "empty": "Нет данных.",
-      "label": "Выберите фильтры",
-      "settings": {
-        "show_chart": "Показать главный график"
-      }
-    },
     "force run title": "Принудительный запуск выполнения <code>{id}</code>.",
     "executions force run": "<code>{executionCount}</code> выполнение(я) принудительный запуск",
     "force run done": "Выполнение принудительного запуска",
@@ -1009,6 +962,131 @@
     "create_custom_dashboard": "Создать новую панель управления",
     "edit_custom_dashboard": "Редактировать Dashboard",
     "custom_dashboard_empty": "Нет результатов для отображения.",
-    "remove_bookmark": "Вы уверены, что хотите удалить эту закладку?"
+    "remove_bookmark": "Вы уверены, что хотите удалить эту закладку?",
+    "execution_guide": {
+      "get_started": {
+        "title": "Начать ⚡",
+        "text": "Следуйте Руководству по быстрому старту, чтобы установить Kestra и начать создавать свои первые workflows."
+      },
+      "workflow_components": {
+        "text": "Познакомьтесь с основными компонентами оркестрации в workflow Kestra.",
+        "title": "Компоненты Workflow"
+      },
+      "videos_tutorials": {
+        "text": "Начните с наших видеоуроков.",
+        "title": "Видеоуроки"
+      }
+    },
+    "no-executions-view": {
+      "sub_title": "Нажмите на кнопку Execute, чтобы начать выполнение вашего первого workflow.",
+      "guidance_desc": "Нужна помощь для выполнения вашего flow?",
+      "guidance_sub_desc": "Следуйте документации для получения всей необходимой информации.",
+      "title": "Начните автоматизацию с"
+    },
+    "filters": {
+      "options": {
+        "child": "Дочерний элемент",
+        "metric": "Метрика",
+        "labels": "Метки",
+        "details": "Детали",
+        "absolute_date": "Абсолютная дата",
+        "scope": "Область применения",
+        "trigger_state": "Состояние",
+        "state": "Состояние",
+        "action": "Действие",
+        "text": "I'm sorry, but it seems that the text you want me to translate is missing. Could you please provide the text that needs to be translated?",
+        "relative_date": "Относительная дата",
+        "level": "Уровень Log",
+        "aggregation": "Агрегация",
+        "permission": "Разрешение",
+        "namespace": "Namespace",
+        "user": "Пользователь",
+        "task": "Задача",
+        "flow": "Поток",
+        "type": "Тип",
+        "status": "Статус",
+        "service_type": "Тип"
+      },
+      "settings": {
+        "label": "Настройки страницы",
+        "show_chart": "Показать основную диаграмму"
+      },
+      "comparators": {
+        "contains": "содержит",
+        "is": "является",
+        "is_not": "не является",
+        "in": "в",
+        "starts_with": "начинается с",
+        "not_contains": "не содержит",
+        "is_not_one_off": "не является одним из",
+        "is_one_of": "является одним из",
+        "between": "между"
+      },
+      "save": {
+        "label": "Сохранённые поиски",
+        "tooltip": "Вы не можете сохранить пустые критерии поиска.",
+        "dialog": {
+          "heading": "Сохранить текущий поиск",
+          "confirmation": "Критерии поиска <code>{name}</code>",
+          "placeholder": "Ярлык",
+          "hint": "Как вы хотите обозначить этот критерий поиска?"
+        },
+        "empty": "Вы еще не сохранили ни одного поиска."
+      },
+      "empty": "Нет данных.",
+      "format": "Введите параметр в формате 'key:value'",
+      "label": "Выберите фильтры"
+    },
+    "custom value": "Пользовательское значение",
+    "execution restarted": "Это выполнение было перезапущено {nbRestart} раз(а).",
+    "chart": "График",
+    "source only": "Источник только",
+    "chart preview": "Предварительный просмотр диаграммы",
+    "execution replayed": "Это выполнение было воспроизведено.",
+    "execution replay": "Это выполнение является повтором <code>{originalId}</code>.",
+    "no_code": {
+      "fields": {
+        "main": {
+          "description": "Описание",
+          "namespace": "Namespace",
+          "flow_id": "ID потока"
+        },
+        "general": {
+          "plugin_defaults": "Настройки плагина по умолчанию",
+          "variables": "Переменные",
+          "labels": "Метки",
+          "outputs": "Выходы",
+          "concurrency": "Конкурентность",
+          "inputs": "Входные данные",
+          "retry": "Повторить попытку",
+          "disabled": "Отключено"
+        }
+      },
+      "sections": {
+        "general": "Общие свойства",
+        "triggers": "Триггеры",
+        "main": "Основные свойства",
+        "error_handlers": "Обработчики ошибок",
+        "tasks": "Задачи"
+      },
+      "creation": {
+        "select": "Выберите {section}",
+        "tasks": "Добавить task",
+        "error handlers": "Добавить обработчик ошибок",
+        "triggers": "Добавить trigger"
+      },
+      "save": {
+        "tasks": "Сохранить task",
+        "triggers": "Сохранить trigger"
+      },
+      "labels": {
+        "no_code": "Редактор No Code",
+        "yaml": "Редактор YAML",
+        "label": "Метка",
+        "variable": "Переменная"
+      },
+      "adding": "+ Добавить {what}"
+    },
+    "export_to_file": "Экспортировать в файл"
   }
 }

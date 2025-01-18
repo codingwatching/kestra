@@ -8,8 +8,8 @@ import io.kestra.core.exceptions.InternalException;
 import io.kestra.core.metrics.MetricRegistry;
 import io.kestra.core.models.executions.*;
 import io.kestra.core.models.executions.statistics.ExecutionCount;
-import io.kestra.core.models.flows.*;
 import io.kestra.core.models.flows.Flow;
+import io.kestra.core.models.flows.*;
 import io.kestra.core.models.flows.sla.*;
 import io.kestra.core.models.tasks.ExecutableTask;
 import io.kestra.core.models.tasks.Task;
@@ -22,6 +22,7 @@ import io.kestra.core.repositories.FlowRepositoryInterface;
 import io.kestra.core.runners.Executor;
 import io.kestra.core.runners.ExecutorService;
 import io.kestra.core.runners.*;
+import io.kestra.core.server.ClusterEvent;
 import io.kestra.core.server.Service;
 import io.kestra.core.server.ServiceStateChangeEvent;
 import io.kestra.core.services.*;
@@ -47,9 +48,11 @@ import org.jooq.Configuration;
 import org.slf4j.event.Level;
 
 import java.io.IOException;
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -98,6 +101,10 @@ public class JdbcExecutor implements ExecutorInterface, Service {
     @Inject
     @Named(QueueFactoryInterface.SUBFLOWEXECUTIONRESULT_NAMED)
     private QueueInterface<SubflowExecutionResult> subflowExecutionResultQueue;
+
+    @Inject
+    @Named(QueueFactoryInterface.CLUSTER_EVENT_NAMED)
+    private Optional<QueueInterface<ClusterEvent>> clusterEventQueue;
 
     @Inject
     private RunContextFactory runContextFactory;
@@ -176,6 +183,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
     private final String id = IdUtils.create();
 
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
+    private final AtomicBoolean isPaused = new AtomicBoolean(false);
 
     private final AtomicReference<ServiceState> state = new AtomicReference<>();
 
@@ -219,6 +227,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
         this.receiveCancellations.addFirst(this.workerTaskResultQueue.receive(Executor.class, this::workerTaskResultQueue));
         this.receiveCancellations.addFirst(this.killQueue.receive(Executor.class, this::killQueue));
         this.receiveCancellations.addFirst(this.subflowExecutionResultQueue.receive(Executor.class, this::subflowExecutionResultQueue));
+        this.clusterEventQueue.ifPresent(clusterEventQueueInterface -> this.receiveCancellations.addFirst(clusterEventQueueInterface.receive(this::clusterEventQueue)));
 
         ScheduledFuture<?> scheduledDelayFuture = scheduledDelay.scheduleAtFixedRate(
             this::executionDelaySend,
@@ -294,7 +303,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                             flowTopologyService
                                 .topology(
                                     flow,
-                                    this.allFlows
+                                    this.allFlows.stream().filter(f -> Objects.equals(f.getTenantId(), flow.getTenantId())).toList()
                                 )
                         )
                             .distinct()
@@ -307,6 +316,38 @@ public class JdbcExecutor implements ExecutorInterface, Service {
             }
         ));
         setState(ServiceState.RUNNING);
+    }
+
+    private void clusterEventQueue(Either<ClusterEvent, DeserializationException> either) {
+        if (either.isRight()) {
+            log.error("Unable to deserialize a cluster event: {}", either.getRight().getMessage());
+            return;
+        }
+
+        ClusterEvent clusterEvent = either.getLeft();
+        log.info("Cluster event received: {}", clusterEvent);
+        switch (clusterEvent.eventType()) {
+            case MAINTENANCE_ENTER -> {
+                this.executionQueue.pause();
+                this.workerTaskResultQueue.pause();
+                this.killQueue.pause();
+                this.subflowExecutionResultQueue.pause();
+                this.flowQueue.pause();
+
+                this.isPaused.set(true);
+                this.setState(ServiceState.MAINTENANCE);
+            }
+            case MAINTENANCE_EXIT -> {
+                this.executionQueue.resume();
+                this.workerTaskResultQueue.resume();
+                this.killQueue.resume();
+                this.subflowExecutionResultQueue.resume();
+                this.flowQueue.resume();
+
+                this.isPaused.set(false);
+                this.setState(ServiceState.RUNNING);
+            }
+        }
     }
 
     void reEmitWorkerJobsForWorkers(final Configuration configuration,
@@ -322,7 +363,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                     } else {
                         try {
                             workerTaskQueue.emit(WorkerTask.builder()
-                                .taskRun(workerTaskRunning.getTaskRun())
+                                .taskRun(workerTaskRunning.getTaskRun().onRunningResend())
                                 .task(workerTaskRunning.getTask())
                                 .runContext(workerTaskRunning.getRunContext())
                                 .build()
@@ -965,14 +1006,14 @@ public class JdbcExecutor implements ExecutorInterface, Service {
     }
 
     /**
-     * ExecutionDelay is currently two type of execution :
+     * ExecutionDelay is currently two types of execution:
      * <br/>
      * - Paused flow that will be restarted after an interval/timeout
      * <br/>
      * - Failed flow that will be retried after an interval
      **/
     private void executionDelaySend() {
-        if (shutdown.get()) {
+        if (this.shutdown.get() || this.isPaused.get()) {
             return;
         }
 
@@ -1034,7 +1075,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
     }
 
     private void executionSLAMonitor() {
-        if (shutdown.get()) {
+        if (this.shutdown.get() || this.isPaused.get()) {
             return;
         }
 

@@ -435,10 +435,7 @@
     "show documentation": "Dokumentation anzeigen",
     "focus task": "Klicken Sie auf ein Element, um dessen Dokumentation zu sehen.",
     "validate": "Validieren",
-    "add global error handler": "Globalen Fehler-Handler hinzufügen",
     "add error handler": "Fehler-Handler hinzufügen",
-    "add trigger": "Trigger hinzufügen",
-    "edit metadata": "Metadaten bearbeiten",
     "taskDefaults": "Task-Standards",
     "disabled": "Deaktiviert",
     "before": "vor",
@@ -647,20 +644,17 @@
     "execution-warn-deleting-still-running": "Wir empfehlen dringend, diese Aktion abzubrechen und alle laufenden Ausführungen zuerst zu beenden. Das Löschen nicht beendeter Ausführungen kann zu Nebenläufigkeitsproblemen, Inkonsistenzen im Flow-Abhängigkeitsmanagement und Zombie-Prozessen auf Ihrer Instanz führen, was die Systemleistung beeinträchtigen kann. Stellen Sie sicher, dass Sie diese Risiken vollständig verstehen, bevor Sie mit dem Löschen fortfahren.",
     "originalCreatedDate": "Ursprüngliches Erstellungsdatum",
     "welcome": {
-      "started": {
-        "title": "In 3 einfachen Schritten loslegen"
-      },
-      "product-tour": {
-        "title": "Produkt-Tour machen"
-      },
-      "doc": {
-        "title": "Dokumentation"
-      },
-      "need-help": {
-        "title": "Brauchen Sie Hilfe?"
-      },
       "tutorial": {
-        "title": "Tutorial"
+        "title": "Tutorial",
+        "text": "* [Video-Tutorials](https://kestra.io/tutorial-videos/all)\n* [Dokumentation](https://kestra.io/docs)\n* [Blueprints](https://kestra.io/blueprints)"
+      },
+      "tour": {
+        "title": "Produkt-Tour starten",
+        "text": "Wählen Sie Ihren Anwendungsfall und folgen Sie einer Schritt-für-Schritt-Anleitung, um die Funktionen und Möglichkeiten von Kestra kennenzulernen. ❤️"
+      },
+      "help": {
+        "text": "Stellen Sie jede Frage in unserer Slack-Community. Wenn Sie feststecken, sind wir hier, um Ihnen zu helfen. ✋",
+        "title": "Brauchen Sie Hilfe?"
       }
     },
     "pluginPage": {
@@ -680,7 +674,8 @@
             "log_level": "Standard-Log-Ebene",
             "log_display": "Standard-Log-Anzeige",
             "execute_flow": "Flow ausführen",
-            "execute_default_tab": "Standard-Ausführungs-Registerkarte"
+            "execute_default_tab": "Standard-Ausführungs-Registerkarte",
+            "editor_type": "Standard-Editor-Typ"
           }
         },
         "theme": {
@@ -697,7 +692,8 @@
               "label": "Diagramm-Farbschema",
               "classic": "Klassisch",
               "kestra": "Kestra"
-            }
+            },
+            "logs_font_size": "Logs Schriftgröße"
           }
         },
         "localization": {
@@ -874,14 +870,17 @@
       "not_auth": "Sie haben nicht die erforderlichen Berechtigungen, um dieses Widget anzuzeigen.",
       "see_all": "Alle anzeigen",
       "success_ratio_tooltip": "Erfolgsquote ist die Summe der SUCCESS, CANCELLED und WARNING Ausführungen, geteilt durch die Gesamtanzahl der Ausführungen in einem beendeten Zustand.",
-      "failure_ratio_tooltip": "Der Fehlerrate ist die Summe der FAILED, KILLED und RETRIED Ausführungen, geteilt durch die Gesamtanzahl der Ausführungen in einem beendeten Zustand."
+      "failure_ratio_tooltip": "Der Fehlerrate ist die Summe der FAILED, KILLED und RETRIED Ausführungen, geteilt durch die Gesamtanzahl der Ausführungen in einem beendeten Zustand.",
+      "preview": "Dashboard-Vorschau"
     },
     "delete_log": "Sind Sie sicher, dass Sie das Log löschen möchten?",
     "docs": "Dokumentation",
     "behavior": "Verhalten",
     "concurrency-view": {
-      "desc_no_limit": "Lesen Sie mehr über <a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">Nebenläufigkeitsgrenzen</a> in unserer Dokumentation.",
-      "title_no_limit": "Es sind keine Grenzen für diesen Flow festgelegt."
+      "desc_no_limit": "Lesen Sie mehr über <strong><a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">Nebenläufigkeitsgrenzen</a></strong> in unserer Dokumentation.",
+      "title_no_limit": "Es sind keine Grenzen für diesen Flow festgelegt.",
+      "desc_no_executions": "Lesen Sie mehr über <strong><a href=\"https://kestra.io/docs/workflow-components/execution\" target=\"_blank\">Ausführungen</a></strong> in unserer Dokumentation.",
+      "title_no_executions": "Keine laufenden Ausführungen für diesen Flow."
     },
     "active-slots": "Aktive Slots",
     "concurrency": "Nebenläufigkeit",
@@ -906,7 +905,7 @@
     "no_data": "Es sieht so aus, als wäre hier noch nichts... bisher!<br/>Passen Sie Ihre Filter an oder versuchen Sie es erneut!",
     "informative notice": "Hinweis(e)",
     "triggers-view": {
-      "desc_no_triggers": "Lesen Sie mehr über <a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a> in unserer Dokumentation.",
+      "desc_no_triggers": "Lesen Sie mehr über <strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a></strong> in unserer Dokumentation.",
       "title_no_triggers": "Ihr Flow hat keine Trigger."
     },
     "dependency-view": {
@@ -925,52 +924,6 @@
     "execution-warn-title": "Wichtige Warnung!",
     "worker group key": "Worker-Gruppe Schlüssel",
     "worker group fallback": "Arbeitsgruppe Fallback",
-    "filters": {
-      "comparators": {
-        "is": "ist",
-        "is_one_of": "ist einer von",
-        "is_not_one_off": "ist nicht einer von",
-        "is_not": "ist nicht",
-        "between": "zwischen",
-        "in": "im",
-        "not_contains": "nicht enthält",
-        "starts_with": "beginnt mit",
-        "contains": "enthält"
-      },
-      "recent": {
-        "label": "Letzte Suchanfragen",
-        "empty": "Sie haben noch nichts gesucht."
-      },
-      "labels": {
-        "placeholder": "Geben Sie das Label als 'key:value' ein."
-      },
-      "save": {
-        "dialog": {
-          "hint": "Wie möchten Sie dieses Suchkriterium labeln?",
-          "heading": "Aktuelle Suche speichern",
-          "confirmation": "Suchkriterien <code>{name}</code>",
-          "placeholder": "Label"
-        },
-        "label": "Gespeicherte Suchen",
-        "tooltip": "Sie können keine leeren Suchkriterien speichern."
-      },
-      "options": {
-        "namespace": "Namespace",
-        "scope": "Umfang",
-        "text": "I'm sorry, but it seems like the text you want me to translate is missing. Could you please provide the text that needs to be translated?",
-        "labels": "Labels",
-        "state": "Zustand",
-        "child": "Kind",
-        "absolute_date": "Absolutes Datum",
-        "relative_date": "Relatives Datum",
-        "level": "Log-Ebene"
-      },
-      "empty": "Keine Daten.",
-      "label": "Filter auswählen",
-      "settings": {
-        "show_chart": "Hauptdiagramm anzeigen"
-      }
-    },
     "force run title": "Erzwinge die Ausführung <code>{id}</code>.",
     "executions force run": "<code>{executionCount}</code> Ausführung(en) erzwungener Lauf",
     "force run done": "Ausführung ist erzwungener Lauf",
@@ -1009,6 +962,131 @@
     "create_custom_dashboard": "Neues Dashboard erstellen",
     "edit_custom_dashboard": "Dashboard bearbeiten",
     "custom_dashboard_empty": "Es gibt keine Ergebnisse anzuzeigen.",
-    "remove_bookmark": "Sind Sie sicher, dass Sie dieses Lesezeichen entfernen möchten?"
+    "remove_bookmark": "Sind Sie sicher, dass Sie dieses Lesezeichen entfernen möchten?",
+    "execution_guide": {
+      "get_started": {
+        "title": "Loslegen ⚡",
+        "text": "Befolgen Sie den Quickstart-Guide, um Kestra zu installieren und mit dem Erstellen Ihrer ersten Workflows zu beginnen."
+      },
+      "workflow_components": {
+        "text": "Lernen Sie die Hauptkomponenten der Orchestrierung eines Kestra-Workflows kennen.",
+        "title": "Workflow-Komponenten"
+      },
+      "videos_tutorials": {
+        "text": "Loslegen mit unseren Video-Tutorials.",
+        "title": "Videoanleitungen"
+      }
+    },
+    "no-executions-view": {
+      "sub_title": "Klicken Sie auf die Ausführen-Schaltfläche, um die erste Workflow-Ausführung zu starten.",
+      "guidance_desc": "Benötigen Sie Unterstützung, um Ihren Flow auszuführen?",
+      "guidance_sub_desc": "Folgen Sie der Dokumentation für alle Informationen, die Sie benötigen.",
+      "title": "Beginnen Sie mit der Automatisierung mit"
+    },
+    "filters": {
+      "options": {
+        "child": "Kind",
+        "metric": "Metrik",
+        "labels": "Labels",
+        "details": "Details",
+        "absolute_date": "Absolutes Datum",
+        "scope": "Umfang",
+        "trigger_state": "Zustand",
+        "state": "Zustand",
+        "action": "Aktion",
+        "text": "I'm sorry, but it seems that there is no text provided after \"----------\" for translation. Could you please provide the text you would like me to translate?",
+        "relative_date": "Relatives Datum",
+        "level": "Log-Ebene",
+        "aggregation": "Aggregation",
+        "permission": "Berechtigung",
+        "namespace": "Namespace",
+        "user": "Benutzer",
+        "task": "Aufgabe",
+        "flow": "Flow",
+        "type": "Typ",
+        "status": "Status",
+        "service_type": "Typ"
+      },
+      "settings": {
+        "label": "Seiteneinstellungen",
+        "show_chart": "Hauptdiagramm anzeigen"
+      },
+      "comparators": {
+        "contains": "enthält",
+        "is": "ist",
+        "is_not": "ist nicht",
+        "in": "im",
+        "starts_with": "beginnt mit",
+        "not_contains": "nicht enthält",
+        "is_not_one_off": "ist nicht einer von",
+        "is_one_of": "ist eine von",
+        "between": "zwischen"
+      },
+      "save": {
+        "label": "Gespeicherte Suchen",
+        "tooltip": "Sie können keine leeren Suchkriterien speichern.",
+        "dialog": {
+          "heading": "Aktuelle Suche speichern",
+          "confirmation": "Suchkriterien <code>{name}</code>",
+          "placeholder": "Label",
+          "hint": "Wie möchten Sie dieses Suchkriterium labeln?"
+        },
+        "empty": "Sie haben noch keine Suche gespeichert."
+      },
+      "empty": "Keine Daten.",
+      "format": "Geben Sie den Parameter als 'key:value' ein",
+      "label": "Filter auswählen"
+    },
+    "custom value": "Benutzerdefinierter Wert",
+    "execution restarted": "Diese Ausführung wurde {nbRestart} Mal neu gestartet.",
+    "chart": "Diagramm",
+    "source only": "Nur Quelle",
+    "chart preview": "Diagrammvorschau",
+    "execution replayed": "Diese Ausführung wurde erneut abgespielt.",
+    "execution replay": "Diese Ausführung ist eine Wiederholung von <code>{originalId}</code>.",
+    "no_code": {
+      "fields": {
+        "main": {
+          "description": "Beschreibung",
+          "namespace": "Namespace",
+          "flow_id": "Flow-ID"
+        },
+        "general": {
+          "plugin_defaults": "Plugin-Standardeinstellungen",
+          "variables": "Variablen",
+          "labels": "Labels",
+          "outputs": "Ausgaben",
+          "concurrency": "Nebenläufigkeit",
+          "inputs": "Eingaben",
+          "retry": "Wiederholen",
+          "disabled": "Deaktiviert"
+        }
+      },
+      "sections": {
+        "general": "Allgemeine Eigenschaften",
+        "triggers": "Trigger",
+        "main": "Haupteigenschaften",
+        "error_handlers": "Fehlerbehandler",
+        "tasks": "Aufgaben"
+      },
+      "creation": {
+        "select": "Wählen Sie einen {section} aus",
+        "tasks": "Aufgabe hinzufügen",
+        "error handlers": "Fügen Sie einen Fehlerhandler hinzu",
+        "triggers": "Füge einen Trigger hinzu"
+      },
+      "save": {
+        "tasks": "Aufgabe speichern",
+        "triggers": "Speicher Trigger"
+      },
+      "labels": {
+        "no_code": "Kein Code-Editor",
+        "yaml": "YAML-Editor",
+        "label": "Label",
+        "variable": "Variable"
+      },
+      "adding": "+ {what} hinzufügen"
+    },
+    "export_to_file": "In Datei exportieren"
   }
 }

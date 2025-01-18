@@ -126,6 +126,7 @@
       "demo": "Get a demo"
     },
     "source": "Source",
+    "source only": "Source only",
     "home": "Home",
     "create": "Create",
     "create_flow": "Create Flow",
@@ -497,10 +498,8 @@
     "show documentation": "Show documentation",
     "focus task": "Click on any element to see its documentation.",
     "validate": "Validate",
-    "add global error handler": "Add global error handler",
     "add error handler": "Add an error handler",
-    "add trigger": "Add trigger",
-    "edit metadata": "Edit Metadata",
+    "export_to_file": "Export to file",
     "taskDefaults": "Task Defaults",
     "disabled": "Disabled",
     "before": "before",
@@ -714,20 +713,17 @@
     "execution-warn-deleting-still-running": "We strongly recommend that you cancel this action and kill any ongoing executions first. Deleting non-terminated executions can lead to concurrency issues, flow dependency management inconsistencies, and zombie processes on your instance, which can degrade system performance. Make sure you fully understand these risks before proceeding with the deletion.",
     "originalCreatedDate": "Original creation date",
     "welcome": {
-      "started": {
-        "title": "Get started in 3 easy steps"
-      },
-      "product-tour": {
-        "title": "Take a product tour"
-      },
-      "doc": {
-        "title": "Docs"
+      "tour": {
+        "title": "Take a product tour",
+        "text": "Chose your use case and follow a step-by-step guide to learn Kestra 's features and capabilities. ❤️"
       },
       "tutorial": {
-        "title": "Tutorial"
+        "title": "Tutorial",
+        "text": "* [Video Tutorials](https://kestra.io/tutorial-videos/all)\n* [Documentation](https://kestra.io/docs)\n* [Blueprints](https://kestra.io/blueprints)"
       },
-      "need-help": {
-        "title": "Need help?"
+      "help": {
+        "title": "Need help?",
+        "text": "Ask any question in our Slack community. If you are stuck, we are help to help you. ✋"
       }
     },
     "pluginPage": {
@@ -746,6 +742,7 @@
             "default_namespace": "Default Namespace",
             "log_level": "Default Log Level",
             "log_display": "Default Log Display",
+            "editor_type": "Default Editor Type",
             "execute_flow": "Execute the Flow",
             "execute_default_tab": "Default Execution Tab"
           }
@@ -756,6 +753,7 @@
             "mode": "Theme Mode",
             "editor_theme": "Editor Theme",
             "editor_font_size": "Editor Font Size",
+            "logs_font_size": "Logs Font Size",
             "editor_font_family": "Editor Font Family",
             "editor_folding_stratgy": "Automatic Code Folding in the Editor",
             "environment_name": "Environment Name",
@@ -935,23 +933,46 @@
       "trigger_disabled": "This trigger can only be enabled through code.",
       "description": "Description",
       "no_flow_description": "This flow has no description.",
-      "not_auth": "You don't have the necessary permissions to view this widget."
+      "not_auth": "You don't have the necessary permissions to view this widget.",
+      "preview": "Dashboard preview"
     },
     "docs": "Docs",
     "active-slots": "Active slots",
     "behavior": "Behavior",
     "concurrency": "Concurrency",
+    "no-executions-view": {
+      "title": "Start automating with ",
+      "sub_title": "Click on the Execute button to start your first workflow execution.",
+      "guidance_desc": "Need guidance to execute your flow?",
+      "guidance_sub_desc": "Follow the documentation for all the info you need."
+    },
+    "execution_guide": {
+      "get_started": {
+        "title": "Get Started ⚡",
+        "text": "Follow the Quickstart Guide to install Kestra and start building your first workflows."
+      },
+      "workflow_components": {
+        "title": "Workflow Components",
+        "text": "Get to know the main orchestration components of a Kestra workflow."
+      },
+      "videos_tutorials": {
+        "title": "Video Tutorials",
+        "text": "Get started with our video tutorials."
+      }
+    },
     "concurrency-view": {
+      "title_no_executions":"No ongoing Executions for this Flow.",
+      "desc_no_executions":"Read more about <strong><a href=\"https://kestra.io/docs/workflow-components/execution\" target=\"_blank\">Executions</a></strong> in our documentation.",
       "title_no_limit": "No limits are set for this Flow.",
-      "desc_no_limit": "Read more about <a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">Concurrency Limits</a> in our documentation."
+      "desc_no_limit": "Read more about <strong><a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">Concurrency Limits</a></strong> in our documentation."
     },
     "dependency-view": {
       "title_no_deps": "No dependencies are set for this Flow.",
       "desc_no_deps": "Read more about <a href=\"https://kestra.io/docs/ui/flows#dependencies\" target=\"_blank\">Flow Dependencies</a> in our documentation."
     },
     "triggers-view": {
-      "title_no_triggers": "Your flow does't have any Triggers.",
-      "desc_no_triggers": "Read more about <a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a> in our documentation."
+      "title_no_triggers": "Your flow doesn't have any Triggers.",
+      "desc_no_triggers": "Read more about <strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a></strong> in our documentation."
     },
     "open sidebar": "open sidebar",
     "close sidebar": "close sidebar",
@@ -964,18 +985,49 @@
     "showLess": "Show less",
     "showMore": "Show more",
     "documentationMenu": "Documentation menu",
+    "item": "item",
+    "items": "items",
+    "cron": "Cron",
+    "execution failed header": "Execution failed!",
+    "execution failed message": "With last error: <code>{message}</code>",
+    "execution restarted": "This execution has been restarted {nbRestart} time(s).",
+    "execution replay": "This execution is a replay of <code>{originalId}</code>.",
+    "execution replayed": "This execution has been replayed.",
+    "task run id": "TaskRun ID",
+    "active": "Active",
+    "flows imported": "Flows imported",
+    "flow not imported": "Some flow could not be imported",
+    "dashboard_label": "Dashboard",
+    "default_dashboard": "Default Dashboard",
+    "custom_dashboard": "Custom Dashboards",
+    "create_custom_dashboard": "Create new dashboard",
+    "edit_custom_dashboard": "Edit Dashboard",
+    "custom_dashboard_empty": "There are no results to be shown.",
     "filters": {
       "label": "Choose filters",
       "empty": "No data.",
+      "format": "Type parameter as 'key:value'",
       "options": {
         "namespace": "Namespace",
+        "flow": "Flow",
         "state": "State",
+        "trigger_state": "State",
         "scope": "Scope",
-        "labels": "Labels",
         "child": "Child",
         "level": "Log level",
+        "task": "Task",
+        "metric": "Metric",
+        "user": "User",
+        "type": "Type",
+        "service_type": "Type",
+        "permission": "Permission",
+        "action": "Action",
+        "status": "Status",
+        "details": "Details",
+        "aggregation": "Aggregation",
         "relative_date": "Relative date",
         "absolute_date": "Absolute date",
+        "labels": "Labels",
         "text": "text"
       },
       "comparators": {
@@ -989,12 +1041,9 @@
         "between": "between",
         "starts_with": "starts with"
       },
-      "recent": {
-        "label": "Recent searches",
-        "empty": "You still haven't searched for anything."
-      },
       "save": {
         "label": "Saved searches",
+        "empty": "You still haven't saved any search.",
         "tooltip": "You can't save empty search criteria.",
         "dialog": {
           "heading": "Save current search",
@@ -1004,26 +1053,55 @@
         }
       },
       "settings": {
+        "label": "Page settings",
         "show_chart": "Show main chart"
-      },
-      "labels": {
-        "placeholder": "Type label as 'key:value'"
       }
     },
-    "item": "item",
-    "items": "items",
-    "cron": "Cron",
-    "execution failed header": "Execution failed!",
-    "execution failed message": "With last error: <code>{message}</code>",
-    "task run id": "TaskRun ID",
-    "active": "Active",
-    "flows imported": "Flows imported",
-    "flow not imported": "Some flow could not be imported",
-    "dashboard_label": "Dashboard",
-    "default_dashboard": "Default Dashboard",
-    "custom_dashboard": "Custom Dashboards",
-    "create_custom_dashboard": "Create new dashboard",
-    "edit_custom_dashboard": "Edit Dashboard",
-    "custom_dashboard_empty": "There are no results to be shown."
+    "custom value": "Custom value",
+    "chart": "Chart",
+    "chart preview": "Chart preview",
+    "no_code": {
+      "adding": "+ Add a {what}",
+      "labels": {
+        "yaml": "YAML Editor",
+        "no_code": "No Code Editor",
+        "label": "Label",
+        "variable": "Variable"
+      },
+      "sections": {
+        "main": "Main properties",
+        "general": "General properties",
+        "tasks": "Tasks",
+        "triggers": "Triggers",
+        "error_handlers": "Error Handlers"
+      },
+      "fields": {
+        "main": {
+          "flow_id": "Flow ID",
+          "namespace": "Namespace",
+          "description": "Description"
+        },
+        "general": {
+          "retry": "Retry",
+          "labels": "Labels",
+          "inputs": "Inputs",
+          "outputs": "Outputs",
+          "variables": "Variables",
+          "concurrency": "Concurrency",
+          "plugin_defaults": "Plugin Defaults",
+          "disabled": "Disabled"
+        }
+      },
+      "creation": {
+        "tasks": "Add a task",
+        "triggers": "Add a trigger",
+        "error handlers": "Add an error handler",
+        "select": "Select a {section}"
+      },
+      "save": {
+        "tasks": "Save task",
+        "triggers": "Save trigger"
+      }
+    }
   }
 }

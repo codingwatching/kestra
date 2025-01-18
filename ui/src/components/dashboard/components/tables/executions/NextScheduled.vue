@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4">
+    <div class="p-4 h-100">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-6 fw-bold">
                 {{ t("dashboard.next_scheduled_executions") }}
@@ -61,7 +61,7 @@
                         </RouterLink>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('namespace')">
+                <el-table-column :label="$t('namespace')" v-if="flow === null">
                     <template #default="scope">
                         <RouterLink
                             :to="{
@@ -82,7 +82,7 @@
                         </RouterLink>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('flow')">
+                <el-table-column :label="$t('flow')" v-if="flow === null">
                     <template #default="scope">
                         <RouterLink
                             :to="{
@@ -107,20 +107,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('dashboard.next_execution_date')">
                     <template #default="scope">
-                        <el-tooltip
-                            v-if="!scope.row.disabled"
-                            :content="scope.row.triggerContext.flowId"
-                            placement="right"
-                        >
-                            <span class="text-truncate">
-                                {{
-                                    moment(
-                                        scope.row.triggerContext
-                                            .nextExecutionDate,
-                                    ).format("lll")
-                                }}
-                            </span>
-                        </el-tooltip>
+                        <date-ago v-if="!scope.row.disabled" :date="scope.row.triggerContext.nextExecutionDate" />
                         <span v-else>-</span>
                     </template>
                 </el-table-column>
@@ -143,13 +130,12 @@
 </template>
 
 <script setup>
-    import {onBeforeMount, watch, ref} from "vue";
+    import {onBeforeMount, ref, watch} from "vue";
     import {useStore} from "vuex";
     import {useI18n} from "vue-i18n";
 
-    import moment from "moment";
-
     import NoData from "../../../../layout/NoData.vue";
+    import DateAgo from "../../../../layout/DateAgo.vue";
 
     import Check from "vue-material-design-icons/Check.vue";
 
@@ -188,7 +174,7 @@
                     results: response.results?.map(
                         ({abstractTrigger, triggerContext, ...rest}) => {
                             const disabled =
-                                abstractTrigger.disabled || triggerContext.disabled;
+                                abstractTrigger?.disabled ?? triggerContext.disabled;
                             const tooltip = !!abstractTrigger.disabled;
 
                             return {
@@ -219,12 +205,13 @@
 
 <style lang="scss">
 code {
-    color: var(--bs-code-color);
+    color: var(--ks-content-id);
 }
 
 .nextscheduled {
-    --el-table-tr-bg-color: var(--bs-body-bg) !important;
-    background: var(--bs-body-bg);
+    --el-table-tr-bg-color: var(--ks-background-body) !important;
+    background: var(--ks-background-body);
+    // FIXME: choose variables
     & a {
         color: #8e71f7;
 

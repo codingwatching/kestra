@@ -435,10 +435,7 @@
     "show documentation": "Pokaż dokumentację",
     "focus task": "Kliknij na dowolny element, aby zobaczyć jego dokumentację.",
     "validate": "Zatwierdź",
-    "add global error handler": "Dodaj globalny handler błędów",
     "add error handler": "Dodaj handler błędów",
-    "add trigger": "Dodaj trigger",
-    "edit metadata": "Edytuj Metadane",
     "taskDefaults": "Domyślne ustawienia task",
     "disabled": "Wyłączone",
     "before": "przed",
@@ -647,20 +644,17 @@
     "execution-warn-deleting-still-running": "Zalecamy anulowanie tej akcji i zakończenie wszystkich trwających executions. Usunięcie nieukończonych executions może prowadzić do problemów z concurrency, niespójności w zarządzaniu zależnościami flow oraz procesów zombie na Twojej instancji, co może pogorszyć wydajność systemu. Upewnij się, że w pełni rozumiesz te ryzyka przed kontynuowaniem usuwania.",
     "originalCreatedDate": "Oryginalna data utworzenia",
     "welcome": {
-      "started": {
-        "title": "Rozpocznij w 3 prostych krokach"
-      },
-      "product-tour": {
-        "title": "Weź udział w wycieczce po produkcie"
-      },
-      "doc": {
-        "title": "Dokumentacja"
-      },
-      "need-help": {
-        "title": "Potrzebujesz pomocy?"
-      },
       "tutorial": {
-        "title": "Samouczek"
+        "title": "Samouczek",
+        "text": "* [Samouczki wideo](https://kestra.io/tutorial-videos/all)\n* [Dokumentacja](https://kestra.io/docs)\n* [Blueprints](https://kestra.io/blueprints)"
+      },
+      "tour": {
+        "title": "Rozpocznij wycieczkę po produkcie",
+        "text": "Wybierz swój przypadek użycia i postępuj zgodnie z przewodnikiem krok po kroku, aby poznać funkcje i możliwości Kestra. ❤️"
+      },
+      "help": {
+        "text": "Zadaj dowolne pytanie w naszej społeczności Slack. Jeśli utkniesz, jesteśmy tutaj, aby Ci pomóc. ✋",
+        "title": "Potrzebujesz pomocy?"
       }
     },
     "pluginPage": {
@@ -680,7 +674,8 @@
             "log_level": "Domyślna Poziom Logs",
             "log_display": "Domyślne Wyświetlanie Log",
             "execute_flow": "Wykonaj Flow",
-            "execute_default_tab": "Domyślna karta Execution"
+            "execute_default_tab": "Domyślna karta Execution",
+            "editor_type": "Domyślny typ edytora"
           }
         },
         "theme": {
@@ -697,7 +692,8 @@
               "label": "Schemat kolorów wykresu",
               "classic": "Klasyczny",
               "kestra": "Kestra"
-            }
+            },
+            "logs_font_size": "Rozmiar czcionki logów"
           }
         },
         "localization": {
@@ -874,14 +870,17 @@
       "not_auth": "Nie masz niezbędnych uprawnień, aby wyświetlić ten widget.",
       "see_all": "Zobacz wszystkie",
       "success_ratio_tooltip": "Wskaźnik Sukcesu to suma wykonań w stanach SUCCESS, CANCELLED i WARNING podzielona przez całkowitą liczbę wykonań w stanie zakończonym.",
-      "failure_ratio_tooltip": "Stosunek niepowodzeń to suma wykonań w stanach FAILED, KILLED i RETRIED podzielona przez całkowitą liczbę wykonań w stanie zakończonym."
+      "failure_ratio_tooltip": "Stosunek niepowodzeń to suma wykonań w stanach FAILED, KILLED i RETRIED podzielona przez całkowitą liczbę wykonań w stanie zakończonym.",
+      "preview": "Podgląd Dashboardu"
     },
     "delete_log": "Czy na pewno chcesz usunąć log?",
     "docs": "Dokumentacja",
     "behavior": "Zachowanie",
     "concurrency-view": {
-      "desc_no_limit": "Przeczytaj więcej o <a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">Limitach Concurrency</a> w naszej dokumentacji.",
-      "title_no_limit": "Brak limitów ustawionych dla tego Flow."
+      "desc_no_limit": "Przeczytaj więcej o <strong><a href=\"https://kestra.io/docs/workflow-components/concurrency\" target=\"_blank\">Limitach Concurrency</a></strong> w naszej dokumentacji.",
+      "title_no_limit": "Brak limitów ustawionych dla tego Flow.",
+      "desc_no_executions": "Przeczytaj więcej o <strong><a href=\"https://kestra.io/docs/workflow-components/execution\" target=\"_blank\">Executions</a></strong> w naszej dokumentacji.",
+      "title_no_executions": "Brak trwających Executions dla tego Flow."
     },
     "active-slots": "Aktywne sloty",
     "concurrency": "Współbieżność",
@@ -906,7 +905,7 @@
     "no_data": "Wygląda na to, że nic tu nie ma... jeszcze!<br/>Dostosuj swoje filtry lub spróbuj ponownie!",
     "informative notice": "Notatka(i)",
     "triggers-view": {
-      "desc_no_triggers": "Przeczytaj więcej o <a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggerach</a> w naszej dokumentacji.",
+      "desc_no_triggers": "Przeczytaj więcej o <strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a></strong> w naszej dokumentacji.",
       "title_no_triggers": "Twój flow nie ma żadnych triggerów."
     },
     "dependency-view": {
@@ -925,52 +924,6 @@
     "execution-warn-title": "Ważne Ostrzeżenie!",
     "worker group key": "Klucz grupy Worker",
     "worker group fallback": "Grupa Workerów awaryjna",
-    "filters": {
-      "comparators": {
-        "is": "jest",
-        "is_one_of": "jest jednym z",
-        "is_not_one_off": "nie jest jednym z",
-        "is_not": "nie jest",
-        "between": "pomiędzy",
-        "in": "w",
-        "not_contains": "nie zawiera",
-        "starts_with": "zaczyna się od",
-        "contains": "zawiera"
-      },
-      "recent": {
-        "label": "Ostatnie wyszukiwania",
-        "empty": "Nie wyszukałeś jeszcze niczego."
-      },
-      "labels": {
-        "placeholder": "Wpisz label jako 'key:value'"
-      },
-      "save": {
-        "dialog": {
-          "hint": "Jak chcesz oznaczyć te kryteria wyszukiwania?",
-          "heading": "Zapisz bieżące wyszukiwanie",
-          "confirmation": "Kryteria wyszukiwania <code>{name}</code>",
-          "placeholder": "Etykieta"
-        },
-        "label": "Zapisane wyszukiwania",
-        "tooltip": "Nie można zapisać pustych kryteriów wyszukiwania."
-      },
-      "options": {
-        "namespace": "Namespace",
-        "scope": "Zakres",
-        "text": "tekst",
-        "labels": "Etykiety",
-        "state": "Stan",
-        "child": "Dziecko",
-        "absolute_date": "Data bezwzględna",
-        "relative_date": "Data względna",
-        "level": "Poziom logowania"
-      },
-      "empty": "Brak danych.",
-      "label": "Wybierz filtry",
-      "settings": {
-        "show_chart": "Pokaż główny wykres"
-      }
-    },
     "force run title": "Wymuś uruchomienie wykonania <code>{id}</code>.",
     "executions force run": "<code>{executionCount}</code> wykonanie(a) wymuszone uruchomienie",
     "force run done": "Wymuszone uruchomienie Execution",
@@ -1009,6 +962,131 @@
     "create_custom_dashboard": "Utwórz nowy dashboard",
     "edit_custom_dashboard": "Edytuj Dashboard",
     "custom_dashboard_empty": "Nie ma wyników do wyświetlenia.",
-    "remove_bookmark": "Czy na pewno chcesz usunąć tę zakładkę?"
+    "remove_bookmark": "Czy na pewno chcesz usunąć tę zakładkę?",
+    "execution_guide": {
+      "get_started": {
+        "title": "Zacznij ⚡",
+        "text": "Postępuj zgodnie z Przewodnikiem Szybkiego Startu, aby zainstalować Kestra i rozpocząć tworzenie swoich pierwszych workflowów."
+      },
+      "workflow_components": {
+        "text": "Poznaj główne komponenty orkiestracji w workflow Kestra.",
+        "title": "Komponenty Workflow"
+      },
+      "videos_tutorials": {
+        "text": "Rozpocznij korzystanie z naszych samouczków wideo.",
+        "title": "Samouczki wideo"
+      }
+    },
+    "no-executions-view": {
+      "sub_title": "Kliknij przycisk Wykonaj, aby rozpocząć pierwsze wykonanie workflow.",
+      "guidance_desc": "Potrzebujesz wskazówek, jak wykonać swój flow?",
+      "guidance_sub_desc": "Postępuj zgodnie z dokumentacją, aby uzyskać wszystkie potrzebne informacje.",
+      "title": "Zacznij automatyzację z"
+    },
+    "filters": {
+      "options": {
+        "child": "Dziecko",
+        "metric": "Metryka",
+        "labels": "Etykiety",
+        "details": "Szczegóły",
+        "absolute_date": "Data bezwzględna",
+        "scope": "Zakres",
+        "trigger_state": "Stan",
+        "state": "Stan",
+        "action": "Akcja",
+        "text": "tekst",
+        "relative_date": "Data względna",
+        "level": "Poziom logowania",
+        "aggregation": "Agregacja",
+        "permission": "Uprawnienie",
+        "namespace": "Namespace",
+        "user": "Użytkownik",
+        "task": "Zadanie",
+        "flow": "Flow",
+        "type": "Typ",
+        "status": "Status",
+        "service_type": "Typ"
+      },
+      "settings": {
+        "label": "Ustawienia strony",
+        "show_chart": "Pokaż główny wykres"
+      },
+      "comparators": {
+        "contains": "zawiera",
+        "is": "jest",
+        "is_not": "nie jest",
+        "in": "w",
+        "starts_with": "zaczyna się od",
+        "not_contains": "nie zawiera",
+        "is_not_one_off": "nie jest jednym z",
+        "is_one_of": "jest jednym z",
+        "between": "pomiędzy"
+      },
+      "save": {
+        "label": "Zapisane wyszukiwania",
+        "tooltip": "Nie można zapisać pustych kryteriów wyszukiwania.",
+        "dialog": {
+          "heading": "Zapisz bieżące wyszukiwanie",
+          "confirmation": "Kryteria wyszukiwania <code>{name}</code>",
+          "placeholder": "Etykieta",
+          "hint": "Jak chcesz oznaczyć te kryteria wyszukiwania?"
+        },
+        "empty": "Nie zapisałeś jeszcze żadnego wyszukiwania."
+      },
+      "empty": "Brak danych.",
+      "format": "Wpisz parametr jako 'key:value'",
+      "label": "Wybierz filtry"
+    },
+    "custom value": "Wartość niestandardowa",
+    "execution restarted": "Ta wykonanie zostało ponownie uruchomione {nbRestart} raz(y).",
+    "chart": "Wykres",
+    "source only": "Tylko źródło",
+    "chart preview": "Podgląd wykresu",
+    "execution replayed": "To wykonanie zostało odtworzone.",
+    "execution replay": "To wykonanie jest powtórką <code>{originalId}</code>.",
+    "no_code": {
+      "fields": {
+        "main": {
+          "description": "Opis",
+          "namespace": "Namespace",
+          "flow_id": "Identyfikator flow"
+        },
+        "general": {
+          "plugin_defaults": "Domyślne ustawienia pluginu",
+          "variables": "Zmienne",
+          "labels": "Etykiety",
+          "outputs": "Wyjścia",
+          "concurrency": "Współbieżność",
+          "inputs": "Wejścia",
+          "retry": "Ponów próbę",
+          "disabled": "Wyłączony"
+        }
+      },
+      "sections": {
+        "general": "Właściwości ogólne",
+        "triggers": "Triggery",
+        "main": "Główne właściwości",
+        "error_handlers": "Obsługa błędów",
+        "tasks": "Zadania"
+      },
+      "creation": {
+        "select": "Wybierz {section}",
+        "tasks": "Dodaj task",
+        "error handlers": "Dodaj obsługę błędów",
+        "triggers": "Dodaj trigger"
+      },
+      "save": {
+        "tasks": "Zapisz task",
+        "triggers": "Zapisz trigger"
+      },
+      "labels": {
+        "no_code": "Edytor No Code",
+        "yaml": "Edytor YAML",
+        "label": "Etykieta",
+        "variable": "Zmienna"
+      },
+      "adding": "+ Dodaj {what}"
+    },
+    "export_to_file": "Eksportuj do pliku"
   }
 }

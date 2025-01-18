@@ -161,9 +161,9 @@
                     )
                 ) {
                     tabs.push({
-                        name: "editor",
+                        name: "edit",
                         component: FlowEditor,
-                        title: this.$t("editor"),
+                        title: this.$t("edit"),
                         containerClass: "full-container",
                         props: {
                             expandedSubflows: this.expandedSubflows,
@@ -202,11 +202,6 @@
                         name: "triggers",
                         component: FlowTriggers,
                         title: this.$t("triggers"),
-                        props: {
-                            showTooltip: !this.flow.triggers || this.flow.triggers.length === 0
-                        },
-                        disabled: !this.flow.triggers,
-                        hideTitle: !this.flow.triggers
                     });
                 }
 
@@ -332,7 +327,7 @@
                     return false;
                 }
 
-                return (this.flow.labels?.["system.readOnly"] === "true" ?? false) || (this.flow.labels?.["system.readOnly"] === true ?? false);
+                return (this.flow.labels?.["system.readOnly"] === "true") || (this.flow.labels?.["system.readOnly"] === true);
             },
             routeFlowDependencies() {
                 return this.dependenciesCount > 0 ? FlowDependencies : FlowNoDependencies;
@@ -346,9 +341,9 @@
 </script>
 <style lang="scss" scoped>
 .gray-700 {
-    color: var(--bs-secondary-color);
+    color: var(--ks-content-secondary-color);
 }
 .body-color {
-    color: var(--bs-body-color);
+    color: var(--ks-content-primary);
 }
 </style>
