@@ -267,8 +267,8 @@
         "alt": "Icône des Blueprints"
       },
       "empty": "Aucun blueprint à afficher.",
-      "custom": "Plans personnalisés",
-      "community": "Communauté"
+      "custom": "Custom blueprints",
+      "community": "Community"
     },
     "use": "Utiliser",
     "plugins": {
@@ -1098,53 +1098,53 @@
     "demos": {
       "namespace": {
         "plugin-defaults": {
-          "title": "Standardiser la Configuration avec les Paramètres par Défaut du Plugin",
-          "message": "Dans Kestra Enterprise Edition, vous pouvez définir des paramètres par défaut spécifiques au namespace pour les plugins, réduisant ainsi le besoin de configurations dupliquées dans chaque flow. Cette gouvernance centrale des plugins impose des configurations cohérentes, permet une référence sécurisée des secrets ou des variables, et simplifie la maintenance de vos workflows."
+          "title": "Standardize Configuration with Plugin Defaults",
+          "message": "In Kestra Enterprise Edition, you can set namespace-specific plugin defaults, reducing the need for duplicated setup in each flow. This central plugin governance enforces consistent configurations, allows secure referencing of secrets or variables, and simplifies maintenance of your workflows."
         },
         "audit-logs": {
-          "message": "Dans Kestra Enterprise Edition, vous pouvez consulter les logs d'audit au niveau du namespace avec des différences détaillées, vous offrant un historique clair de qui a modifié quoi et quand à travers toutes les ressources.",
-          "title": "Suivez tous les changements en un seul endroit"
+          "message": "In Kestra Enterprise Edition, you can view namespace-level audit logs with detailed diffs, giving you a clear history of who changed what and when across all resources.",
+          "title": "Track All Changes in One Place"
         },
         "secrets": {
-          "title": "Gérer les Secrets de manière sécurisée",
-          "message": "Dans Kestra Enterprise Edition, vous pouvez stocker et contrôler les secrets au niveau du namespace, minimisant ainsi les risques et garantissant que les identifiants de chaque équipe restent isolés. Grâce à la hiérarchie imbriquée, vous pouvez également configurer des identifiants dans un namespace parent et ils seront hérités par tous les namespaces enfants. Le support pour les gestionnaires de secrets dédiés et les paramètres de permission au niveau du namespace renforcent encore la sécurité et la conformité."
+          "title": "Manage Secrets in a Secure Way",
+          "message": "In Kestra Enterprise Edition, you can store and control secrets at the namespace level, minimizing risk and ensuring each team's credentials remain isolated. Thanks to the nested hierarchy, you can also configure credentials in a parent namespace and they will be inherited by all child namespaces. Support for dedicated secrets managers and fine-grained namespace-level permission settings further strengthens security and compliance."
         },
         "variables": {
-          "message": "Dans Kestra Enterprise Edition, vous pouvez définir et gérer des variables au niveau du namespace pour éliminer les configurations répétitives à travers les flows. Ces variables assurent la cohérence, simplifient les mises à jour de configuration et peuvent être facilement référencées par n'importe quelle task ou trigger pour des workflows plus clairs et plus faciles à maintenir.",
-          "title": "Gérez vos Variables de manière centralisée"
+          "message": "In Kestra Enterprise Edition, you can define and manage namespace-level variables to eliminate repetitive configurations across flows. These variables ensure consistency, simplify configuration updates, and can be easily referenced by any task or trigger for cleaner, more maintainable workflows.",
+          "title": "Centrally Govern Your Variables"
         },
         "edit": {
-          "message": "Dans Kestra Enterprise Edition, les namespaces offrent une isolation avancée et une gouvernance des secrets, des variables et des paramètres par défaut des plugins à grande échelle. Les administrateurs peuvent configurer des gestionnaires de secrets personnalisés, des backends de stockage isolés, des groupes de workers dédiés, et des permissions détaillées sur une base par namespace. Cela garantit que les secrets, les variables et les configurations de plugins restent sécurisés et faciles à maintenir à travers différentes équipes et projets.",
-          "title": "Améliorez la gestion de votre namespace"
+          "message": "In Kestra Enterprise Edition, namespaces provide advanced isolation and governance of secrets, variables and plugin defaults at scale. Administrators can configure custom secrets managers, isolated storage backends, dedicated worker groups, and fine-grained permissions on a per-namespace basis. This ensures that secrets, variables and plugin configurations remain secure and easy to maintain across different teams and projects.",
+          "title": "Upgrade Your Namespace Management"
         }
       },
       "instance": {
-        "title": "Gérer l'infrastructure sur votre instance",
-        "message": "L'édition Enterprise de Kestra fournit un tableau de bord opérationnel pour vous aider à observer la santé de votre plateforme et à suivre les métriques de disponibilité de tous les services tels que, entre autres, les Workers, les Schedulers et les Executors. Depuis la même page, vous pouvez également créer des annonces pour informer vos utilisateurs des interruptions planifiées, et vous pouvez entrer en mode maintenance, ce qui met temporairement tous les services et exécutions de workflow en état PAUSED pour effectuer une mise à niveau."
+        "title": "Manage Infrastructure Across Your Instance",
+        "message": "Kestra Enterprise Edition provides an operational dashboard to help you observe the health of your platform and track the uptime metrics of all services such as a.o. Workers, Schedulers, and Executors. From the same page, you can also create Announcements to notify your users about planned downtime, and you can enter a maintenance mode which temporarily puts all services and workflow executions into a paused state to perform an upgrade."
       },
       "audit-logs": {
-        "message": "L'édition Enterprise de Kestra enregistre chaque activité avec des enregistrements robustes et immuables, ce qui facilite le suivi des modifications, le maintien de la conformité et la résolution des problèmes.",
-        "title": "Suivre les modifications avec les Audit Logs"
+        "message": "Kestra Enterprise Edition logs every activity with robust, immutable records, making it easy to track changes, maintain compliance, and troubleshoot issues.",
+        "title": "Track Changes with Audit Logs"
       },
       "blueprints": {
-        "message": "Dans l'édition Kestra Enterprise, vous pouvez créer des Blueprints personnalisés uniquement disponibles pour votre organisation. Vous pouvez les utiliser comme modèles de bonnes pratiques pour partager, centraliser et documenter les workflows couramment utilisés dans votre équipe.",
-        "title": "Ajouter des Blueprints Personnalisés"
+        "message": "In Kestra Enterprise Edition, you can create custom Blueprints only available to your organization. You can use them as best-practices templates to share, centralize, and document commonly used workflows in your team.",
+        "title": "Add Custom Blueprints"
       },
-      "enterprise_edition": "Édition Enterprise",
+      "enterprise_edition": "Enterprise Edition",
       "IAM": {
-        "title": "Gérer les utilisateurs via IAM avec SSO, SCIM et RBAC",
-        "message": "L'édition Enterprise de Kestra dispose de fonctionnalités IAM intégrées avec une authentification unique (SSO), une synchronisation de répertoire SCIM, et un contrôle d'accès basé sur les rôles (RBAC), s'intégrant avec plusieurs fournisseurs d'identité et vous permettant d'attribuer des permissions détaillées pour les utilisateurs et les comptes de service."
+        "title": "Manage Users through IAM with SSO, SCIM and RBAC",
+        "message": "Kestra Enterprise Edition has built-in IAM capabilities with a single sign-on (SSO), SCIM directory sync, and role-based access control (RBAC), integrating with multiple identity providers and letting you assign fine-grained permissions for users and service accounts."
       },
       "tenants": {
-        "title": "Gérer les flux de travail dans des tenants isolés",
-        "message": "L'édition Enterprise de Kestra prend en charge la multi-tenance, vous offrant des environnements entièrement isolés pour différentes équipes ou projets, chacun avec ses propres ressources telles que des groupes de workers dédiés ou des secrets et des backends de stockage internes."
+        "title": "Manage Workflows in Isolated Tenants",
+        "message": "Kestra Enterprise Edition supports multi-tenancy, giving you fully isolated environments for different teams or projects, each with its own resources such as dedicated worker groups or secrets and internal storage backends."
       },
-      "get_a_demo_button": "Obtenir une démo",
+      "get_a_demo_button": "Get a Demo",
       "apps": {
-        "title": "Créez des applications personnalisées avec Kestra",
-        "message": "Les applications dans Kestra Enterprise Edition vous permettent de créer des interfaces utilisateur personnalisées qui interagissent avec les workflows Kestra depuis l'extérieur de la plateforme. Cette fonctionnalité vous permet d'utiliser vos workflows comme un backend pour des applications personnalisées, permettant aux utilisateurs non techniques de soumettre des données via des formulaires ou de reprendre des workflows PAUSED en attente d'approbation."
+        "title": "Build custom Apps with Kestra",
+        "message": "Apps in Kestra Enterprise Edition allow you to build custom UIs that interact with Kestra workflows from outside the platform. This feature lets you use your workflows as a backend for custom applications, enabling non-technical users to submit data through forms or resume paused workflows awaiting approval."
       }
     },
-    "apps": "Applications"
+    "apps": "Apps"
   }
 }
